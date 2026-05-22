@@ -1,26 +1,84 @@
-
-let DB={sets:[],bills:[],invoice:[]};let current='dashboard';
-const $=s=>document.querySelector(s), content=$('#content'), search=$('#search');
-function num(v){v=Number(v);return isFinite(v)?v:0}function kd(v){return num(v).toLocaleString('en-US',{maximumFractionDigits:3})+' KD'}function pick(o,...ks){for(const k of ks){if(o&&o[k]!=null&&o[k]!=='' )return o[k]}return ''}
-async function init(){try{const r=await fetch('data.json');const d=await r.json();DB.sets=[...(d.Owned||[]),...(d.Mother||[]),...(d.Both||[])].map(normalSet);DB.bills=(d.Bills||[]).map(x=>({...x,Price:num(x.Price)}));DB.invoice=d['فاتورة']||[]}catch(e){}loadLocal();bind();render()}
-function normalSet(x){return{open:pick(x,'Open'),n2:pick(x,'N2','NO'),item:pick(x,'item #','Item NO','Item','item'),theme:pick(x,'theme'),subTheme:pick(x,'subTheme'),name:pick(x,'item Name','item Name','NAME'),pcs:num(pick(x,'PCS','BOX')),price:num(pick(x,'Price','The Price')),buy:num(pick(x,'Price BUY','My Price')),store:pick(x,'STORE','Store'),date:pick(x,'Order Date','Date'),url:pick(x,'URL')}}
-function bind(){document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{current=b.dataset.page;document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});search.oninput=()=>render();$('#exportJson').onclick=backup}
-function saveLocal(){localStorage.setItem('hmd_lego_db',JSON.stringify(DB))}function loadLocal(){const x=localStorage.getItem('hmd_lego_db');if(x)try{DB=JSON.parse(x)}catch(e){}}
-function title(t,s){$('#title').textContent=t;$('#subtitle').textContent=s||''}
-function qSets(){const q=search.value.trim().toLowerCase();return DB.sets.filter(x=>!q||[x.item,x.name,x.theme,x.subTheme,x.store].join(' ').toLowerCase().includes(q))}
-function render(){({dashboard,sets,bills,invoice,add,import:importPage}[current]||dashboard)()}
-function dashboard(){title('الرئيسية','ملخص سريع للمجموعات والفواتير');const sets=DB.sets, val=sets.reduce((a,x)=>a+num(x.price),0), cost=sets.reduce((a,x)=>a+num(x.buy),0), pcs=sets.reduce((a,x)=>a+num(x.pcs),0);content.innerHTML=`<div class="grid"><div class="card stat"><span>عدد المجموعات</span><b>${sets.length}</b></div><div class="card stat"><span>قيمة البيع</span><b>${kd(val)}</b></div><div class="card stat"><span>تكلفة الشراء</span><b>${kd(cost)}</b></div><div class="card stat"><span>عدد القطع PCS</span><b>${pcs.toLocaleString()}</b></div></div><div class="section card"><h3>أحدث المجموعات</h3><p class="muted">آخر 8 سجلات من الملف/الإدخال</p><div class="cards section">${sets.slice(0,8).map(setCard).join('')}</div></div>`}
-function setCard(x){return`<div class="card setcard"><div><div class="setnum">#${x.item||'-'} · ${x.theme||''}</div><h3>${x.name||'بدون اسم'}</h3><p class="muted">${x.subTheme||''}</p></div><div class="price"><span>بيع: ${kd(x.price)}</span><span>شراء: ${kd(x.buy)}</span><span>${x.pcs||0} PCS</span></div></div>`}
-function sets(){title('المجموعات','بحث واستعراض مخزون LEGO');const rows=qSets();content.innerHTML=`<div class="toolbar"><button class="primary" onclick="current='add';render()">+ إضافة مجموعة</button><span class="pill">${rows.length} نتيجة</span></div><div class="cards">${rows.slice(0,300).map(setCard).join('')}</div>`}
-function bills(){title('الفواتير','سجل مشتريات وفواتير LEGO');const rows=DB.bills.filter(x=>!search.value||JSON.stringify(x).toLowerCase().includes(search.value.toLowerCase()));content.innerHTML=`<div class="toolbar"><span class="pill">المجموع: ${kd(rows.reduce((a,x)=>a+num(x.Price),0))}</span><span class="pill">${rows.length} فاتورة</span></div>${table(rows.slice(0,500),['Date','time','Price','Items','shopping','Store','Order Date','no'])}`}
-function invoice(){title('فاتورة بيع','اختر قطع وأنشئ فاتورة بسيطة');content.innerHTML=`<div class="card"><div class="formgrid"><input id="invItem" placeholder="رقم القطعة item #"><input id="invQty" type="number" value="1" placeholder="العدد"><button class="primary full" onclick="addInv()">إضافة للفاتورة</button></div></div><div class="section">${table(DB.invoice,['NO','Item','NAME','PRICE','5%','10%','MY Price'])}</div>`}
-function addInv(){const item=$('#invItem').value.trim(), qty=num($('#invQty').value)||1, s=DB.sets.find(x=>String(x.item)==item);DB.invoice.push({NO:DB.invoice.length+1,Item:item,NAME:s?.name||'',PRICE:s?.price||0,'MY Price':(s?.price||0)*qty,Qty:qty});saveLocal();toast('تمت الإضافة للفاتورة');invoice()}
-function add(){title('إضافة بيانات','إضافة مجموعة أو فاتورة يدوياً');content.innerHTML=`<div class="card"><h3>إضافة مجموعة LEGO</h3><div class="formgrid section"><input id="item" placeholder="رقم القطعة"><input id="name" placeholder="اسم المجموعة"><input id="theme" placeholder="Theme"><input id="subTheme" placeholder="SubTheme"><input id="pcs" type="number" placeholder="PCS"><input id="buy" type="number" step="0.001" placeholder="سعر الشراء"><input id="price" type="number" step="0.001" placeholder="سعر البيع"><input id="store" placeholder="المتجر"><button class="primary full" onclick="saveSet()">حفظ المجموعة</button></div></div><div class="card section"><h3>إضافة فاتورة</h3><div class="formgrid section"><input id="bdate" type="date"><input id="bprice" type="number" step="0.001" placeholder="المبلغ"><input id="bitems" type="number" placeholder="عدد القطع"><input id="bstore" placeholder="المتجر"><button class="primary full" onclick="saveBill()">حفظ الفاتورة</button></div></div>`}
-function saveSet(){DB.sets.unshift({item:$('#item').value,name:$('#name').value,theme:$('#theme').value,subTheme:$('#subTheme').value,pcs:num($('#pcs').value),buy:num($('#buy').value),price:num($('#price').value),store:$('#store').value,date:new Date().toISOString().slice(0,10)});saveLocal();toast('تم حفظ المجموعة');dashboard()}
-function saveBill(){DB.bills.unshift({Date:$('#bdate').value,Price:num($('#bprice').value),Items:num($('#bitems').value),Store:$('#bstore').value,no:DB.bills.length+1});saveLocal();toast('تم حفظ الفاتورة');bills()}
-function importPage(){title('استيراد Excel','استيراد ملف xlsx/xlsm من جهازك');content.innerHTML=`<div class="drop"><h3>اسحب الملف هنا أو اختره</h3><p class="muted">يدعم Excel عبر مكتبة SheetJS عند توفر الإنترنت أول مرة.</p><input type="file" id="file" accept=".xlsx,.xls,.xlsm"><button class="primary" onclick="doImport()">استيراد</button></div>`}
-function doImport(){const f=$('#file').files[0];if(!f)return toast('اختر ملف Excel');if(typeof XLSX==='undefined')return toast('مكتبة الاستيراد تحتاج اتصال إنترنت لأول مرة');const r=new FileReader();r.onload=e=>{const wb=XLSX.read(e.target.result,{type:'array'});let added=0;wb.SheetNames.forEach(n=>{const rows=XLSX.utils.sheet_to_json(wb.Sheets[n]);if(/bill/i.test(n))DB.bills.push(...rows);else {DB.sets.push(...rows.map(normalSet));added+=rows.length}});saveLocal();toast('تم استيراد '+added+' سجل');dashboard()};r.readAsArrayBuffer(f)}
-function table(rows,cols){return`<div class="tablewrap"><table><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${cols.map(c=>`<td>${r[c]??''}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`}
-function backup(){const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hmd-lego-backup.json';a.click()}
-function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2200)}
-if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});init();
+const pages = [
+  {key:'Owned',title:'الصفحة الرئيسية - Owned',icon:'🧱',editable:true},
+  {key:'Mother',title:'Mother - ألعاب أمي',icon:'👩‍👦',editable:false},
+  {key:'Both',title:'Both - دمج Owned + Mother',icon:'🔗',editable:false,combine:true},
+  {key:'ورقة2',title:'ورقة2',icon:'📊',editable:false},
+  {key:'Bills',title:'Bills - الفواتير',icon:'🧾',editable:false},
+  {key:'All',title:'All - كل البيانات',icon:'📦',editable:false}
+];
+const legoColors = {
+  city:['#0055bf','#fff','City'], creator:['#b8860b','#fff','CREATOR'], 'creator expert':['#111827','#fff','CREATOR EXPERT'],
+  icons:['#6d28d9','#fff','ICONS'], technic:['#f97316','#fff','TECHNIC'], friends:['#e6007e','#fff','FRIENDS'],
+  architecture:['#374151','#fff','ARCHITECTURE'], ideas:['#009fe3','#fff','IDEAS'], minecraft:['#237841','#fff','MINECRAFT'],
+  'harry potter':['#7c2d12','#fff','Harry Potter'], 'star wars':['#111827','#ffed00','STAR WARS'], promotional:['#e3000b','#fff','PROMOTIONAL'],
+  duplo:['#00a3e0','#fff','DUPLO'], disney:['#ec4899','#fff','DISNEY'], ninjago:['#b91c1c','#fff','NINJAGO'],
+  'jurassic world':['#14532d','#fff','Jurassic World'], 'speed champions':['#dc2626','#fff','SPEED CHAMPIONS'],
+  default:['#ffd500','#111827','']
+};
+let DB={}, current='Owned', editIndex=null;
+const $=sel=>document.querySelector(sel);
+const fmt=v=>v===null||v===undefined?'':String(v);
+function normalizeTheme(t){return fmt(t).trim().toLowerCase();}
+function colorForTheme(t){const key=normalizeTheme(t);return legoColors[key]||legoColors.default;}
+function displayTheme(t){const raw=fmt(t).trim(); if(!raw) return ''; const c=colorForTheme(raw); return c[2]||raw.replace(/\b\w/g,m=>m.toUpperCase());}
+async function init(){
+  const res=await fetch('./data.json'); DB=(await res.json()).sheets;
+  const saved=localStorage.getItem('hmd_lego_db_v2'); if(saved){try{DB=JSON.parse(saved)}catch(e){}}
+  renderNav(); render(); bindEvents(); if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+function saveLocal(){localStorage.setItem('hmd_lego_db_v2', JSON.stringify(DB));}
+function renderNav(){
+  $('#nav').innerHTML=pages.map(p=>`<button class="nav-btn ${p.key===current?'active':''}" data-page="${p.key}"><span>${p.icon} ${p.title.split(' - ')[0]}</span><b>${(getRows(p.key)||[]).length}</b></button>`).join('');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.onclick=()=>{current=b.dataset.page; renderNav(); render();});
+}
+function getHeaders(key){
+  if(key==='Both') return DB.Owned?.headers || DB.Both?.headers || [];
+  return DB[key]?.headers || [];
+}
+function getRows(key){
+  if(key==='Both') return [...(DB.Owned?.rows||[]), ...(DB.Mother?.rows||[])];
+  return DB[key]?.rows || [];
+}
+function render(){
+  const p=pages.find(x=>x.key===current); $('#pageTitle').textContent=p.title; $('#addBtn').style.display=p.editable?'inline-block':'none';
+  const q=$('#search').value.toLowerCase().trim(); let rows=getRows(current); const headers=getHeaders(current);
+  if(q) rows=rows.filter(r=>headers.some(h=>fmt(r[h]).toLowerCase().includes(q)));
+  renderKPIs(rows,headers); renderTable(rows,headers,p.editable); $('#recordCount').textContent=`${rows.length} سجل`; $('#tableTitle').textContent=p.title;
+}
+function num(v){const n=parseFloat(v);return isFinite(n)?n:0;}
+function renderKPIs(rows,headers){
+  const pieces=rows.reduce((a,r)=>a+num(r.PCS||r.PCs||r.pcs),0); const buy=rows.reduce((a,r)=>a+num(r['Price BUY']||r['price buy']),0);
+  const sale=rows.reduce((a,r)=>a+num(r.Price||r.price),0); const themes=new Set(rows.map(r=>fmt(r.theme||r.Theme)).filter(Boolean));
+  $('#kpis').innerHTML=`<div class="kpi"><b>${rows.length}</b><span>عدد الألعاب</span></div><div class="kpi"><b>${pieces.toLocaleString()}</b><span>مجموع القطع PCs</span></div><div class="kpi"><b>${buy.toFixed(2)}</b><span>إجمالي سعر الشراء</span></div><div class="kpi"><b>${themes.size}</b><span>عدد الثيمات</span></div>`;
+}
+function renderTable(rows,headers,editable){
+  const action=editable?'<th>Action</th>':'';
+  $('#dataTable').innerHTML=`<thead><tr>${action}${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map((r,i)=>`<tr>${editable?`<td><button class="edit-btn" data-edit="${i}">تعديل</button></td>`:''}${headers.map(h=>cell(h,r[h])).join('')}</tr>`).join('')}</tbody>`;
+  document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openForm(+b.dataset.edit));
+}
+function cell(h,v){
+  const name=h.toLowerCase();
+  if(name==='theme') { const [bg,fg]=colorForTheme(v); return `<td><span class="theme-badge" style="background:${bg};color:${fg}">${displayTheme(v)}</span></td>`; }
+  if(name==='url' && fmt(v)) return `<td class="url-cell"><a href="#" title="${fmt(v)}">${fmt(v).split(/[\\/]/).pop()}</a></td>`;
+  return `<td>${fmt(v)}</td>`;
+}
+function bindEvents(){
+  $('#search').oninput=render; $('#addBtn').onclick=()=>openForm(null); $('#saveEntry').onclick=e=>{e.preventDefault(); saveEntry();}; $('#fileInput').onchange=importExcel;
+}
+function openForm(idx){
+  editIndex=idx; const headers=DB.Owned.headers; const row=idx===null?{}:DB.Owned.rows[idx];
+  $('#formFields').innerHTML=headers.map(h=>`<div class="field"><label>${h}</label><input name="${h}" value="${fmt(row[h]).replace(/"/g,'&quot;')}" /></div>`).join('');
+  $('#formDialog').showModal();
+}
+function saveEntry(){
+  const fd=new FormData($('#entryForm')); const rec={}; DB.Owned.headers.forEach(h=>rec[h]=fd.get(h));
+  if(editIndex===null) DB.Owned.rows.unshift(rec); else DB.Owned.rows[editIndex]=rec;
+  saveLocal(); $('#formDialog').close(); renderNav(); render();
+}
+async function importExcel(e){
+  const file=e.target.files[0]; if(!file||!window.XLSX){alert('مكتبة قراءة Excel تحتاج إنترنت لأول مرة.');return;}
+  const buf=await file.arrayBuffer(); const wb=XLSX.read(buf,{type:'array',cellDates:true});
+  pages.forEach(p=>{ if(wb.SheetNames.includes(p.key)){ const rows=XLSX.utils.sheet_to_json(wb.Sheets[p.key],{defval:null}); const headers=rows[0]?Object.keys(rows[0]):DB[p.key]?.headers||[]; DB[p.key]={headers,rows}; }});
+  saveLocal(); renderNav(); render(); alert('تم استيراد ملف Excel وتحديث البيانات.');
+}
+init();
