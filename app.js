@@ -59,10 +59,15 @@ function renderKPIs(rows){
   const total=rows.reduce((a,r)=>a+num(val(r,'price2 (total price)')||val(r,'Price2 (Total)')||val(r,'price')),0); const themes=new Set(rows.map(r=>fmt(val(r,'theme'))).filter(Boolean));
   $('#kpis').innerHTML=`<div class="kpi"><i>🧱</i><div><b>${rows.length}</b><span>عدد الألعاب</span></div></div><div class="kpi"><i>📦</i><div><b>${pieces.toLocaleString()}</b><span>إجمالي القطع</span></div></div><div class="kpi"><i>$</i><div><b>${buy.toFixed(2)}</b><span>سعر الشراء</span></div></div><div class="kpi"><i>🎨</i><div><b>${themes.size}</b><span>الثيمات</span></div></div>`;
 }
+function shortHeader(h){
+  const map={'price2 (total price)':'price2','total bill (total after discount)':'total bill','order date':'date','item Name':'item name','price buy':'buy'};
+  return map[h]||h;
+}
 function renderTable(rows,headers,editable){
   const per=Number($('#rowsPerPage').value||20); const totalPages=Math.max(1,Math.ceil(rows.length/per)); if(page>totalPages) page=totalPages;
   const start=(page-1)*per; const slice=rows.slice(start,start+per); const action=editable?'<th>Action</th>':'';
-  $('#dataTable').innerHTML=`<thead><tr>${action}${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${slice.map((r,i)=>`<tr data-row="${start+i}">${editable?`<td><button class="edit-btn" data-edit="${start+i}">تعديل</button></td>`:''}${headers.map(h=>cell(h,val(r,h))).join('')}</tr>`).join('')}</tbody>`;
+  $('#dataTable').className = editable ? 'has-action' : 'no-action';
+  $('#dataTable').innerHTML=`<thead><tr>${action}${headers.map(h=>`<th title="${h}">${shortHeader(h)}</th>`).join('')}</tr></thead><tbody>${slice.map((r,i)=>`<tr data-row="${start+i}">${editable?`<td><button class="edit-btn" data-edit="${start+i}">تعديل</button></td>`:''}${headers.map(h=>cell(h,val(r,h))).join('')}</tr>`).join('')}</tbody>`;
   document.querySelectorAll('tbody tr').forEach(tr=>tr.onclick=e=>{ if(e.target.closest('[data-edit]')) return; openDetails(rows[+tr.dataset.row]); });
   document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=e=>{e.stopPropagation(); openForm(+b.dataset.edit);});
   $('#pageInfo').textContent=`عرض ${slice.length?start+1:0} - ${Math.min(start+per,rows.length)} من ${rows.length}`; $('#pageNo').textContent=page;
