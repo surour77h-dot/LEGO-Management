@@ -4,43 +4,39 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>HMD LEGO Collection</title>
-  <meta name="theme-color" content="#FFD500" />
+  <meta name="theme-color" content="#ffffff" />
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
   <div class="app-shell">
-    <aside class="sidebar">
-      <div class="brand">
+    <header class="main-header">
+      <div class="hamburger">☰</div>
+      <div class="brand-left">
         <div class="logo-brick">LEGO</div>
         <div><h1>HMD LEGO</h1><p>Collection Manager</p></div>
       </div>
-      <nav id="nav"></nav>
-      <div class="side-card">
-        <strong>استيراد Excel</strong>
-        <span>يحدّث الصفحات حسب أسماء الشيتات.</span>
-        <label class="import-btn">اختر ملف Excel<input id="fileInput" type="file" accept=".xlsx,.xls,.xlsm" hidden /></label>
-      </div>
-    </aside>
+      <div class="page-center"><span class="cube">🧱</span><h2 id="pageTitle">الصفحة الرئيسية</h2></div>
+      <div class="header-actions"><button title="Dark">☾</button><button title="Full">⛶</button></div>
+    </header>
+
+    <section class="compact-toolbar">
+      <div class="searchbox">🔎 <input id="search" placeholder="بحث سريع…" /></div>
+      <div class="kpis" id="kpis"></div>
+      <label class="import-top">استيراد Excel<input id="fileInput" type="file" accept=".xlsx,.xls,.xlsm" hidden /></label>
+      <button id="addBtn" class="primary add-only">إضافة جديد +</button>
+    </section>
+
     <main>
-      <header class="topbar">
-        <div class="page-id">
-          <span class="eyebrow">نسخة LEGO محسّنة</span>
-          <h2 id="pageTitle">Owned</h2>
-        </div>
-        <div class="toolbar">
-          <div class="searchbox">🔎 <input id="search" placeholder="بحث سريع…" /></div>
-          <div class="kpis" id="kpis"></div>
-          <button id="addBtn" class="primary add-only">+ إضافة جديد</button>
-        </div>
-      </header>
       <section class="table-card">
         <div class="table-head"><h3 id="tableTitle">البيانات</h3><span id="recordCount"></span></div>
         <div class="table-wrap"><table id="dataTable"></table></div>
         <div class="pager"><span id="pageInfo"></span><div class="pager-actions"><button id="prevPage">‹</button><span id="pageNo">1</span><button id="nextPage">›</button><select id="rowsPerPage"><option>15</option><option selected>20</option><option>30</option><option>50</option></select></div></div>
       </section>
     </main>
+
+    <nav id="nav" class="bottom-nav"></nav>
   </div>
 
   <dialog id="formDialog" class="drawer-dialog">

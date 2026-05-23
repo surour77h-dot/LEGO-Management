@@ -1,5 +1,5 @@
 const pages = [
-  {key:'Owned',title:'الصفحة الرئيسية - Owned',icon:'🏠',editable:true},
+  {key:'Owned',title:'Owned Collection - إدخال البيانات',icon:'🏠',editable:true},
   {key:'Mother',title:'Mother - ألعاب أمي',icon:'👤',editable:false},
   {key:'Both',title:'Both - دمج Owned + Mother',icon:'🟪',editable:false,combine:true},
   {key:'ورقة2',title:'ورقة2',icon:'📄',editable:false},
@@ -40,7 +40,7 @@ function getRows(key){
   return DB[key]?.rows || [];
 }
 function renderNav(){
-  $('#nav').innerHTML=pages.map(p=>`<button class="nav-btn ${p.key===current?'active':''}" data-page="${p.key}"><span>${p.icon}<br>${p.key}</span><b>${(getRows(p.key)||[]).length}</b></button>`).join('');
+  $('#nav').innerHTML=pages.map(p=>`<button class="nav-btn ${p.key===current?'active':''}" data-page="${p.key}"><span class="ico">${p.icon}</span><span>${p.key}</span><b>${(getRows(p.key)||[]).length}</b></button>`).join('');
   document.querySelectorAll('.nav-btn').forEach(b=>b.onclick=()=>{current=b.dataset.page; page=1; renderNav(); render();});
 }
 function filteredRows(){
@@ -49,7 +49,7 @@ function filteredRows(){
   return rows;
 }
 function render(){
-  const p=pages.find(x=>x.key===current); $('#pageTitle').textContent=p.title; $('#addBtn').style.display=p.editable?'inline-block':'none';
+  const p=pages.find(x=>x.key===current); $('#pageTitle').textContent=p.key==='Owned'?'الصفحة الرئيسية':p.title; $('#addBtn').style.display=p.editable?'inline-block':'none';
   const rows=filteredRows(), headers=getHeaders(current); renderKPIs(rows); renderTable(rows,headers,p.editable);
   $('#recordCount').textContent=`${rows.length} سجل`; $('#tableTitle').textContent=p.title;
 }
