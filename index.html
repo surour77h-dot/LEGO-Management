@@ -25,29 +25,52 @@
     </aside>
     <main>
       <header class="topbar">
-        <div>
-          <span class="eyebrow">نسخة بتصميم LEGO</span>
+        <div class="page-id">
+          <span class="eyebrow">نسخة LEGO محسّنة</span>
           <h2 id="pageTitle">Owned</h2>
         </div>
-        <div class="top-actions">
-          <input id="search" placeholder="بحث سريع…" />
-          <button id="addBtn" class="primary">+ إضافة لعبة</button>
+        <div class="toolbar">
+          <div class="searchbox">🔎 <input id="search" placeholder="بحث سريع…" /></div>
+          <div class="kpis" id="kpis"></div>
+          <button id="addBtn" class="primary add-only">+ إضافة جديد</button>
         </div>
       </header>
-      <section class="kpis" id="kpis"></section>
       <section class="table-card">
         <div class="table-head"><h3 id="tableTitle">البيانات</h3><span id="recordCount"></span></div>
         <div class="table-wrap"><table id="dataTable"></table></div>
+        <div class="pager"><span id="pageInfo"></span><div class="pager-actions"><button id="prevPage">‹</button><span id="pageNo">1</span><button id="nextPage">›</button><select id="rowsPerPage"><option>15</option><option selected>20</option><option>30</option><option>50</option></select></div></div>
       </section>
     </main>
   </div>
-  <dialog id="formDialog">
-    <form method="dialog" id="entryForm">
-      <div class="dialog-head"><h3>إضافة / تعديل بيانات Owned</h3><button value="cancel" type="submit">×</button></div>
-      <div class="form-grid" id="formFields"></div>
-      <menu><button value="cancel">إلغاء</button><button id="saveEntry" value="default" class="primary">حفظ</button></menu>
+
+  <dialog id="formDialog" class="drawer-dialog">
+    <form method="dialog" id="entryForm" class="drawer-form">
+      <div class="drawer-side">
+        <div class="mini-logo">LEGO</div>
+        <b>إضافة لعبة جديدة</b>
+        <span>Owned فقط</span>
+        <button value="cancel" type="submit" class="close-light">×</button>
+      </div>
+      <div class="drawer-content">
+        <div class="dialog-head"><h3>إدخال بيانات Owned</h3><span>تصميم حديث مقسم لحقول واضحة</span></div>
+        <div class="form-section"><h4>المعلومات الأساسية</h4><div class="form-grid" id="basicFields"></div></div>
+        <div class="form-section"><h4>الأسعار والكميات</h4><div class="form-grid" id="priceFields"></div></div>
+        <div class="form-section"><h4>معلومات إضافية</h4><div class="form-grid" id="extraFields"></div></div>
+        <menu><button value="cancel">إلغاء</button><button id="saveEntry" value="default" class="primary">حفظ ✓</button></menu>
+      </div>
     </form>
   </dialog>
+
+  <section id="detailView" class="detail-view" hidden>
+    <div class="detail-card">
+      <div class="detail-top"><button id="backToTable" class="back-btn">← العودة للجدول</button><h3>تفاصيل اللعبة</h3><span class="brick-icon">🧱</span></div>
+      <div class="detail-main">
+        <div class="set-art" id="setArt">🧱</div>
+        <div class="set-summary"><h2 id="detailName">Item</h2><span id="detailTheme" class="theme-badge"></span><p id="detailSubtheme"></p></div>
+      </div>
+      <div class="detail-grid" id="detailGrid"></div>
+    </div>
+  </section>
   <script src="app.js"></script>
 </body>
 </html>
