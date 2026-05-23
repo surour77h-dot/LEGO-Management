@@ -11,26 +11,33 @@
 </head>
 <body>
   <div class="app-shell">
-    <header class="main-header">
-      <div class="hamburger">☰</div>
-      <div class="brand-left">
+    <header class="topbar">
+      <div class="brand-area">
+        <button id="menuBtn" class="menu-btn" aria-label="menu">☰</button>
         <div class="logo-brick">LEGO</div>
-        <div><h1>HMD LEGO</h1><p>Collection Manager</p></div>
+        <div class="title-block"><h1>HMD LEGO</h1><p id="pageTitle">الصفحة الرئيسية</p></div>
+        <div id="menuPanel" class="menu-panel" hidden>
+          <button data-menu-page="Owned">Owned</button>
+          <button data-menu-page="Mother">Mother</button>
+          <button data-menu-page="Both">Both</button>
+          <button data-menu-page="ورقة2">ورقة2</button>
+          <button data-menu-page="Bills">Bills</button>
+          <button data-menu-page="All">All</button>
+          <hr />
+          <label>استيراد Excel<input id="fileInput" type="file" accept=".xlsx,.xls,.xlsm" hidden /></label>
+          <button id="exportExcelBtn">تصدير Excel</button>
+          <button id="exportDataBtn">تصدير بيانات</button>
+        </div>
       </div>
-      <div class="page-center"><span class="cube">🧱</span><h2 id="pageTitle">الصفحة الرئيسية</h2></div>
-      <div class="header-actions"><button title="Dark">☾</button><button title="Full">⛶</button></div>
+      <div class="top-tools">
+        <div class="searchbox">🔎 <input id="search" placeholder="بحث سريع…" /></div>
+        <div class="kpis" id="kpis"></div>
+        <button id="addBtn" class="primary">إضافة جديد +</button>
+      </div>
     </header>
-
-    <section class="compact-toolbar">
-      <div class="searchbox">🔎 <input id="search" placeholder="بحث سريع…" /></div>
-      <div class="kpis" id="kpis"></div>
-      <label class="import-top">استيراد Excel<input id="fileInput" type="file" accept=".xlsx,.xls,.xlsm" hidden /></label>
-      <button id="addBtn" class="primary add-only">إضافة جديد +</button>
-    </section>
 
     <main>
       <section class="table-card">
-        <div class="table-head"><h3 id="tableTitle">البيانات</h3><span id="recordCount"></span></div>
         <div class="table-wrap"><table id="dataTable"></table></div>
         <div class="pager"><span id="pageInfo"></span><div class="pager-actions"><button id="prevPage">‹</button><span id="pageNo">1</span><button id="nextPage">›</button><select id="rowsPerPage"><option>15</option><option selected>20</option><option>30</option><option>50</option></select></div></div>
       </section>
@@ -43,12 +50,12 @@
     <form method="dialog" id="entryForm" class="drawer-form">
       <div class="drawer-side">
         <div class="mini-logo">LEGO</div>
-        <b>إضافة لعبة جديدة</b>
+        <b id="formTitle">إضافة لعبة جديدة</b>
         <span>Owned فقط</span>
         <button value="cancel" type="submit" class="close-light">×</button>
       </div>
       <div class="drawer-content">
-        <div class="dialog-head"><h3>إدخال بيانات Owned</h3><span>تصميم حديث مقسم لحقول واضحة</span></div>
+        <div class="dialog-head"><h3>بيانات اللعبة</h3><span>إدخال وتعديل بيانات Owned</span></div>
         <div class="form-section"><h4>المعلومات الأساسية</h4><div class="form-grid" id="basicFields"></div></div>
         <div class="form-section"><h4>الأسعار والكميات</h4><div class="form-grid" id="priceFields"></div></div>
         <div class="form-section"><h4>معلومات إضافية</h4><div class="form-grid" id="extraFields"></div></div>
@@ -59,10 +66,10 @@
 
   <section id="detailView" class="detail-view" hidden>
     <div class="detail-card">
-      <div class="detail-top"><button id="backToTable" class="back-btn">← العودة للجدول</button><h3>تفاصيل اللعبة</h3><span class="brick-icon">🧱</span></div>
+      <div class="detail-top"><button id="backToTable" class="back-btn">← العودة للجدول</button><h3>تفاصيل اللعبة</h3><button id="detailEditBtn" class="edit-detail">✏️ تعديل</button></div>
       <div class="detail-main">
-        <div class="set-art" id="setArt">🧱</div>
-        <div class="set-summary"><h2 id="detailName">Item</h2><span id="detailTheme" class="theme-badge"></span><p id="detailSubtheme"></p></div>
+        <div class="set-art"><img id="setImage" alt="LEGO set image" /><div id="setFallback">🧱</div></div>
+        <div class="set-summary"><h2 id="detailName">Item</h2><span id="detailTheme" class="full-badge"></span><p id="detailSubtheme"></p></div>
       </div>
       <div class="detail-grid" id="detailGrid"></div>
     </div>
