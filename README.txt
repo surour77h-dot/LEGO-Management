@@ -9,3 +9,5 @@ HMD LEGO App v3
 
 للتشغيل عبر GitHub Pages:
 ارفع الملفات الموجودة داخل هذا المجلد مباشرة إلى Repository، ثم Settings > Pages > Deploy from branch > main > /root.
+
+Version v7: fixed details screen opening on app start.
