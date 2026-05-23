@@ -11,3 +11,5 @@ HMD LEGO App v3
 ارفع الملفات الموجودة داخل هذا المجلد مباشرة إلى Repository، ثم Settings > Pages > Deploy from branch > main > /root.
 
 Version v7: fixed details screen opening on app start.
+
+Version v9: URL Open uses Item Name hyperlink from imported Excel; bottom nav removed.
