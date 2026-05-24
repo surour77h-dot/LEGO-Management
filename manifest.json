@@ -1,1 +1,15 @@
-{"name":"HMD LEGO Collection","short_name":"HMD LEGO","start_url":"./index.html","display":"standalone","background_color":"#fff7d6","theme_color":"#ffd500","icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml"}]}
+{
+  "name": "HMD LEGO Collection",
+  "short_name": "HMD LEGO",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fff7d6",
+  "theme_color": "#ffd500",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
