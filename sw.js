@@ -1,4 +1,5 @@
-const CACHE='hmd-lego-v2';
+const CACHE='hmd-lego-v12';
+
 const ASSETS=[
 './',
 './index.html',
