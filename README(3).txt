@@ -1,0 +1,13 @@
+HMD LEGO App v3
+- نسخة محسنة بتصميم LEGO واضح.
+- البطاقات والبحث في سطر واحد وبحجم أصغر.
+- جدول يعرض 20 سطر افتراضياً مع إمكانية 15/30/50.
+- زر إضافة جديد موجود في صفحة Owned فقط.
+- صفحات Mother و Both وورقة2 و Bills و All للعرض فقط.
+- الضغط على أي صف يفتح صفحة تفاصيل للعرض فقط مع زر العودة للجدول.
+- يدعم الاستيراد من Excel عبر زر استيراد Excel.
+
+للتشغيل عبر GitHub Pages:
+ارفع الملفات الموجودة داخل هذا المجلد مباشرة إلى Repository، ثم Settings > Pages > Deploy from branch > main > /root.
+
+Version v7: fixed details screen opening on app start.

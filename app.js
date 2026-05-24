@@ -25,7 +25,31 @@ const storeColors={
 let DB={},current='Owned',page=1,editIndex=null,selectedRow=null,selectedIndex=null;
 const $=s=>document.querySelector(s); const fmt=v=>v==null?'':String(v);
 function norm(s){return fmt(s).trim().toLowerCase().replace(/[^a-z0-9%#]/g,'');}
-function findKey(o,n){const nn=norm(n);return Object.keys(o||{}).find(k=>norm(k)===nn || (nn==='item#'&&norm(k)==='item') || (nn==='pc'&&norm(k)==='pcs'));}
+function findKey(o,n){
+  const nn=norm(n);
+  const aliases={
+    'item#':['item#','item','itemno','itemnumber','itemid','item #'],
+    'pcs':['pcs','pc','pieces'],
+    'pricebuy':['pricebuy','buy','price buy'],
+    'price2totalprice':['price2totalprice','price2','totalprice','price 2','price2 (total price)'],
+    'totalbilltotalafterdiscount':['totalbilltotalafterdiscount','totalbill','totalafterdiscount','total bill','total bill (total after discount)'],
+    'orderdate':['orderdate','date','order date'],
+    'itemname':['itemname','item name','name'],
+    'store':['store'],
+    'url':['url','link','href'],
+    'open':['open'],
+    'theme':['theme'],
+    'subtheme':['subtheme','sub theme'],
+    'price':['price'],
+    'n2':['n2'],
+    '%':['%','percent','percentage']
+  };
+  const wants=aliases[nn]||[nn];
+  return Object.keys(o||{}).find(k=>{
+    const kk=norm(k);
+    return kk===nn || wants.some(a=>kk===norm(a));
+  });
+}
 function val(r,h){const k=findKey(r,h);return k?r[k]:r[h];}
 function setVal(r,h,v){const k=findKey(r,h)||h;r[k]=v;}
 function num(v){const n=parseFloat(fmt(v).replace(/,/g,''));return isFinite(n)?n:0;}
@@ -33,10 +57,17 @@ function themeKey(v){return fmt(v).trim().toLowerCase();}
 function themeStyle(v){return themeColors[themeKey(v)]||themeColors.default;}
 function storeStyle(v){return storeColors[themeKey(v)]||storeColors.default;}
 function themeLabel(v){const raw=fmt(v).trim(); const s=themeStyle(raw); return s[2]||raw;}
-function getItemNameLink(row){return fmt(row?.__itemNameLink || row?.itemNameLink || row?.itemLink || row?.link || row?.href || '');}
+function getItemNameLink(row){
+  const direct=fmt(row?.__itemNameLink || row?.itemNameLink || row?.itemLink || row?.link || row?.href || '');
+  if(isWebUrl(direct))return direct;
+  const urlVal=fmt(val(row,'url'));
+  if(isWebUrl(urlVal))return urlVal;
+  const item=itemNumber(row);
+  return item?`https://brickset.com/sets/${item}-1`:'';
+}
 function isWebUrl(s){return /^https?:\/\//i.test(fmt(s));}
-async function init(){const res=await fetch('./data.json'); DB=(await res.json()).sheets; const saved=localStorage.getItem('hmd_lego_db_v9'); if(saved){try{DB=JSON.parse(saved)}catch(e){}} bindEvents(); renderNav(); render(); if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});}
-function saveLocal(){localStorage.setItem('hmd_lego_db_v9',JSON.stringify(DB));}
+async function init(){const res=await fetch('./data.json'); DB=(await res.json()).sheets; const saved=localStorage.getItem('hmd_lego_db_v10'); if(saved){try{DB=JSON.parse(saved)}catch(e){}} bindEvents(); renderNav(); render(); if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});}
+function saveLocal(){localStorage.setItem('hmd_lego_db_v10',JSON.stringify(DB));}
 function getHeaders(key){if(key==='Owned')return wantedOwned;if(key==='Both')return DB.Owned?.headers||wantedOwned;return DB[key]?.headers||[];}
 function getRows(key){if(key==='Both')return [...(DB.Owned?.rows||[]),...(DB.Mother?.rows||[])];return DB[key]?.rows||[];}
 function renderNav(){ $('#nav').innerHTML=pages.map(p=>`<button class="nav-btn ${p.key===current?'active':''}" data-page="${p.key}"><span>${p.icon}</span><b>${p.key}</b></button>`).join(''); document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>switchPage(b.dataset.page));}
@@ -47,16 +78,46 @@ function pctText(v){let n=num(v); if(Math.abs(n)<=1) n=n*100; return `${Math.rou
 function render(){const p=pages.find(x=>x.key===current); $('#pageTitle').textContent=p.title; $('#addBtn').style.display=p.editable?'inline-flex':'none'; const rows=filteredRows(); renderKPIs(rows); renderTable(rows,getHeaders(current));}
 function renderKPIs(rows){const pieces=rows.reduce((a,r)=>a+num(val(r,'PCs')),0); const buy=rows.reduce((a,r)=>a+num(val(r,'price buy')),0); const themes=new Set(rows.map(r=>fmt(val(r,'theme'))).filter(Boolean)); $('#kpis').innerHTML=`<div><b>${rows.length}</b><span>سجل</span></div><div><b>${pieces.toLocaleString()}</b><span>قطع</span></div><div><b>${buy.toFixed(1)}</b><span>شراء</span></div><div><b>${themes.size}</b><span>Theme</span></div>`;}
 function shortHeader(h){return {'price2 (total price)':'price2','total bill (total after discount)':'total bill','order date':'date','item Name':'item','price buy':'buy'}[h]||h;}
-function renderTable(rows,headers){const per=Number($('#rowsPerPage').value||20); const totalPages=Math.max(1,Math.ceil(rows.length/per)); if(page>totalPages)page=totalPages; const start=(page-1)*per, slice=rows.slice(start,start+per); $('#dataTable').innerHTML=`<thead><tr>${headers.map(h=>`<th title="${h}">${shortHeader(h)}</th>`).join('')}</tr></thead><tbody>${slice.map((r,i)=>`<tr data-row="${start+i}">${headers.map(h=>cell(h,val(r,h),r)).join('')}</tr>`).join('')}</tbody>`; document.querySelectorAll('tbody tr').forEach(tr=>tr.onclick=e=>{if(e.target.closest('a'))return; openDetails(rows[+tr.dataset.row],+tr.dataset.row)}); document.querySelectorAll('td a').forEach(a=>a.onclick=e=>e.stopPropagation()); $('#pageInfo').textContent=`${slice.length?start+1:0}-${Math.min(start+per,rows.length)} / ${rows.length}`; $('#pageNo').textContent=page; $('#prevPage').disabled=page<=1; $('#nextPage').disabled=page>=totalPages;}
-function cell(h,v,row){const n=h.toLowerCase(); if(n.includes('theme')&&!n.includes('subtheme')){const [bg,fg]=themeStyle(v);return `<td class="full-cell" style="background:${bg};color:${fg}">${themeLabel(v)}</td>`;} if(n==='store'){const [bg,fg]=storeStyle(v);return `<td class="full-cell" style="background:${bg};color:${fg}">${fmt(v)}</td>`;} if(n==='%'){const p=current==='Owned'?calcPercent(row):num(v); const pp=Math.round(Math.abs(p)<=1?p*100:p); let cls=pp>=100?'pct-full':pp>0?'pct-mid':''; return `<td class="pct ${cls}">${pp>0?pctText(p):fmt(v)}</td>`;} if(n==='url'){const link=getItemNameLink(row); return `<td class="url-cell">${isWebUrl(link)?`<a href="${safeUrl(link)}" target="_blank" rel="noopener noreferrer">Open</a>`:''}</td>`;} return `<td>${fmt(v)}</td>`;}
-function safeUrl(v){const s=fmt(v); if(/^https?:\/\//i.test(s))return s; return s;}
+function colClass(h){
+  const n=norm(h);
+  if(n==='n2')return 'col-n2';
+  if(n==='open')return 'col-open';
+  if(n==='item#'||n==='item')return 'col-itemno';
+  if(n==='theme')return 'col-theme';
+  if(n==='subtheme')return 'col-subtheme';
+  if(n==='itemname')return 'col-name';
+  if(n==='pcs')return 'col-pcs';
+  if(n==='price'||n==='pricebuy')return 'col-money';
+  if(n==='store')return 'col-store';
+  if(n==='price2totalprice'||n==='totalbilltotalafterdiscount')return 'col-total';
+  if(n==='orderdate')return 'col-date';
+  if(n==='%')return 'col-pct';
+  if(n==='url')return 'col-url';
+  return 'col-auto';
+}
+function renderTable(rows,headers){
+  const per=Number($('#rowsPerPage').value||20);
+  const totalPages=Math.max(1,Math.ceil(rows.length/per));
+  if(page>totalPages)page=totalPages;
+  const start=(page-1)*per, slice=rows.slice(start,start+per);
+  const colgroup=`<colgroup>${headers.map(h=>`<col class="${colClass(h)}">`).join('')}</colgroup>`;
+  $('#dataTable').innerHTML=`${colgroup}<thead><tr>${headers.map(h=>`<th class="${colClass(h)}" title="${h}">${shortHeader(h)}</th>`).join('')}</tr></thead><tbody>${slice.map((r,i)=>`<tr data-row="${start+i}">${headers.map(h=>cell(h,val(r,h),r)).join('')}</tr>`).join('')}</tbody>`;
+  document.querySelectorAll('tbody tr').forEach(tr=>tr.onclick=e=>{if(e.target.closest('a,button'))return; openDetails(rows[+tr.dataset.row],+tr.dataset.row)});
+  document.querySelectorAll('td a').forEach(a=>a.onclick=e=>e.stopPropagation());
+  $('#pageInfo').textContent=`${slice.length?start+1:0}-${Math.min(start+per,rows.length)} / ${rows.length}`;
+  $('#pageNo').textContent=page;
+  $('#prevPage').disabled=page<=1;
+  $('#nextPage').disabled=page>=totalPages;
+}
+function cell(h,v,row){const n=h.toLowerCase(); if(n.includes('theme')&&!n.includes('subtheme')){const [bg,fg]=themeStyle(v);return `<td class="full-cell" style="background:${bg};color:${fg}">${themeLabel(v)}</td>`;} if(n==='store'){const [bg,fg]=storeStyle(v);return `<td class="full-cell" style="background:${bg};color:${fg}">${fmt(v)}</td>`;} if(n==='%'){const p=current==='Owned'?calcPercent(row):num(v); const pp=Math.round(Math.abs(p)<=1?p*100:p); let cls=pp>=100?'pct-full':pp>0?'pct-mid':''; return `<td class="pct ${cls}">${pp>0?pctText(p):fmt(v)}</td>`;} if(n==='url'){const link=getItemNameLink(row); const u=safeUrl(link); return `<td class="url-cell">${u?`<a href="${u}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation(); window.open(this.href,'_blank'); return false;">Open</a>`:''}</td>`;} return `<td>${fmt(v)}</td>`;}
+function safeUrl(v){const s=fmt(v).trim(); if(/^https?:\/\//i.test(s))return s.replace(/"/g,'%22'); return '';}
 function bindEvents(){ $('#search').oninput=()=>{page=1;render();}; $('#addBtn').onclick=()=>openForm(null); $('#saveEntry').onclick=e=>{e.preventDefault();saveEntry();}; $('#fileInput').onchange=importExcel; $('#prevPage').onclick=()=>{if(page>1){page--;render();}}; $('#nextPage').onclick=()=>{page++;render();}; $('#rowsPerPage').onchange=()=>{page=1;render();}; $('#backToTable').onclick=()=>{$('#detailView').hidden=true;}; $('#menuBtn').onclick=()=>{$('#menuPanel').hidden=!$('#menuPanel').hidden;}; document.querySelectorAll('[data-menu-page]').forEach(b=>b.onclick=()=>switchPage(b.dataset.menuPage)); $('#exportDataBtn').onclick=exportData; $('#exportExcelBtn').onclick=exportExcel; $('#detailEditBtn').onclick=()=>{if(current==='Owned'&&selectedIndex!=null)openForm(selectedIndex);};}
 function field(h,row={}){let value= h==='%'&&row?calcPercent(row):val(row,h); return `<div class="field"><label>${h}</label><input name="${h}" ${h==='%'?'readonly':''} value="${fmt(value).replace(/"/g,'&quot;')}" /></div>`;}
 function openForm(idx){if(current!=='Owned')return; editIndex=idx; const row=idx==null?{}:filteredRows()[idx]||DB.Owned.rows[idx]||{}; $('#formTitle').textContent=idx==null?'إضافة لعبة جديدة':'تعديل بيانات اللعبة'; const basic=['N2','open','item#','theme','subtheme','item Name']; const price=['PCs','price','price buy','Store','price2 (total price)','total bill (total after discount)']; const extra=['order date','%','url']; $('#basicFields').innerHTML=basic.map(h=>field(h,row)).join(''); $('#priceFields').innerHTML=price.map(h=>field(h,row)).join(''); $('#extraFields').innerHTML=extra.map(h=>field(h,row)).join(''); $('#formDialog').showModal();}
 function saveEntry(){const fd=new FormData($('#entryForm')); const rec={}; wantedOwned.forEach(h=>rec[h]=fd.get(h)||''); rec['%']=calcPercent(rec); if(!DB.Owned)DB.Owned={headers:wantedOwned,rows:[]}; DB.Owned.headers=wantedOwned; if(editIndex==null)DB.Owned.rows.unshift(rec); else DB.Owned.rows[editIndex]=rec; saveLocal(); $('#formDialog').close(); renderNav(); render();}
 function itemNumber(row){return fmt(val(row,'item#')||val(row,'item #')).replace(/[^0-9]/g,'');}
 function openDetails(row,idx){selectedRow=row; selectedIndex=idx; const headers=getHeaders(current); const name=fmt(val(row,'item Name')||'تفاصيل اللعبة'), theme=fmt(val(row,'theme')); $('#detailName').textContent=name; const [bg,fg]=themeStyle(theme); $('#detailTheme').style.background=bg; $('#detailTheme').style.color=fg; $('#detailTheme').textContent=themeLabel(theme)||'Theme'; $('#detailSubtheme').textContent=fmt(val(row,'subtheme')); $('#detailEditBtn').style.display=current==='Owned'?'inline-flex':'none'; const item=itemNumber(row); const img=$('#setImage'), fallback=$('#setFallback'); fallback.hidden=false; img.hidden=true; if(item){img.src=`https://cdn.rebrickable.com/media/sets/${item}-1.jpg`; img.onload=()=>{img.hidden=false;fallback.hidden=true}; img.onerror=()=>{img.hidden=true;fallback.hidden=false};} $('#detailGrid').innerHTML=headers.map(h=>`<div class="detail-box"><small>${h}</small><b>${detailValue(h,val(row,h),row)}</b></div>`).join(''); $('#detailView').hidden=false;}
-function detailValue(h,v,row){const n=h.toLowerCase(); if(n==='url'){const link=getItemNameLink(row); return isWebUrl(link)?`<a href="${safeUrl(link)}" target="_blank" rel="noopener noreferrer">فتح الرابط 🔗</a>`:'-';} if(n==='%')return pctText(current==='Owned'?calcPercent(row):v); return fmt(v)||'-';}
+function detailValue(h,v,row){const n=h.toLowerCase(); if(n==='url'){const link=getItemNameLink(row); return isWebUrl(link)?`<a href="${safeUrl(link)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation(); window.open(this.href,'_blank'); return false;">فتح الرابط 🔗</a>`:'-';} if(n==='%')return pctText(current==='Owned'?calcPercent(row):v); return fmt(v)||'-';}
 async function importExcel(e){
   const file=e.target.files[0];
   if(!file||!window.XLSX){alert('مكتبة قراءة Excel تحتاج إنترنت لأول مرة.');return;}
