@@ -1,0 +1,9 @@
+{
+  "name": "HSKW LEGO Collection",
+  "short_name": "HSKW LEGO",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#1a1a2e",
+  "background_color": "#1a1a2e",
+  "start_url": "./index.html"
+}

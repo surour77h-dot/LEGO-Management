@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1a1a2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HSKW LEGO">
+<title>HSKW LEGO Collection</title>
+<link rel="manifest" href="manifest.json?v=20260610-1">
+<link rel="stylesheet" href="style.css?v=20260610-1">
+<script id="CLEAR_CACHE">
+if('caches' in window){caches.keys().then(keys=>keys.forEach(k=>caches.delete(k))).catch(()=>{});}
+if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{});}
+</script>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-dot">🧱</div>
+    <div>
+      <div class="logo-text">HSKW LEGO</div>
+      <div class="logo-sub">Collection Manager</div>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-chip" id="hdr-total">—</div>
+    <div class="stat-chip" id="hdr-sheets">9 Sheets</div>
+  </div>
+</div>
+
+<div class="tab-scroll">
+  <div class="tabs" id="tabsContainer"></div>
+</div>
+
+<div class="content" id="mainContent"></div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modalBox">
+    <h2 id="modalTitle">Add Record <button class="modal-close" onclick="closeModal()">✕</button></h2>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js?v=20260610-1"></script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js?v=20260610-1').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
