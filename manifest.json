@@ -1,9 +1,9 @@
 {
-  "name": "HSKW LEGO Collection",
-  "short_name": "HSKW LEGO",
+  "name": "قروب الكورة - Clean V3 R15",
+  "short_name": "قروب الكورة",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#1a1a2e",
-  "background_color": "#1a1a2e",
+  "theme_color": "#08111f",
+  "background_color": "#08111f",
   "start_url": "./index.html"
 }
