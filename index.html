@@ -1,298 +1,871 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#08111f">
-<title>قروب الكورة - Clean V3</title>
-<link rel="manifest" href="manifest.json?v=cleanv3r15">
-<link rel="stylesheet" href="style.css?v=color_verified_20260608_2">
-<script id="FINAL_FORCE_CLEAR_CACHE_V8">
-if('caches' in window){caches.keys().then(keys=>keys.forEach(k=>caches.delete(k))).catch(()=>{});}
-if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{});}
-</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="HSKW LEGO">
+<link rel="manifest" href="manifest.json">
+<title>HSKW LEGO Collection</title>
+<style>
+:root {
+  --lego-red: #C4151C;
+  --lego-yellow: #FFD700;
+  --lego-blue: #006DB7;
+  --lego-green: #00A650;
+  --lego-white: #FFFFFF;
+  --lego-orange: #F47B20;
+  --lego-dark-red: #8B0000;
+  
+  --bg: #F5F5F0;
+  --bg2: #FFFFFF;
+  --bg3: #EFEFEA;
+  --panel: #FFFFFF;
+  --border: #D0CFC8;
+  --text: #1A1A1A;
+  --text2: #555550;
+  --text3: #888880;
+  --shadow: 0 2px 8px rgba(0,0,0,0.10);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif; min-height: 100vh; }
+
+/* ── HEADER ── */
+.header {
+  background: var(--lego-red);
+  padding: 14px 16px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 3px 10px rgba(196,21,28,0.4);
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-brick {
+  width: 40px; height: 40px; background: var(--lego-yellow);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-size: 22px; box-shadow: 0 3px 0 #B8960A;
+}
+.logo-text { font-size: 20px; font-weight: 900; color: #fff; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+.logo-sub { font-size: 10px; color: rgba(255,255,255,0.8); letter-spacing: 2px; text-transform: uppercase; }
+.header-stats { display: flex; gap: 8px; flex-wrap: wrap; }
+.stat-chip {
+  background: rgba(255,255,255,0.2); color: #fff;
+  padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+}
+
+/* ── NAV TABS ── */
+.nav-tabs-wrap { background: var(--lego-blue); border-bottom: 3px solid #004A85; }
+.nav-tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+.nav-tabs::-webkit-scrollbar { display: none; }
+.nav-tab {
+  padding: 10px 18px; font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.7);
+  border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; transition: all 0.2s;
+  margin-bottom: -3px;
+}
+.nav-tab.active { color: var(--lego-yellow); border-bottom-color: var(--lego-yellow); }
+
+/* ── CONTENT ── */
+.content { padding: 14px; }
+
+/* ── TOOLBAR ── */
+.toolbar { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
+.search-box {
+  flex: 1; min-width: 180px;
+  display: flex; align-items: center; gap: 8px;
+  background: var(--panel); border: 2px solid var(--border);
+  border-radius: var(--radius-sm); padding: 8px 12px;
+}
+.search-box:focus-within { border-color: var(--lego-blue); }
+.search-box input { flex: 1; border: none; background: none; font-size: 14px; color: var(--text); outline: none; }
+.btn {
+  padding: 9px 16px; border-radius: var(--radius-sm); font-size: 13px;
+  font-weight: 800; cursor: pointer; border: none; transition: all 0.15s;
+  white-space: nowrap; display: flex; align-items: center; gap: 5px;
+}
+.btn-red { background: var(--lego-red); color: #fff; box-shadow: 0 3px 0 #8B0F14; }
+.btn-red:active { transform: translateY(2px); box-shadow: 0 1px 0 #8B0F14; }
+.btn-blue { background: var(--lego-blue); color: #fff; box-shadow: 0 3px 0 #004A85; }
+.btn-blue:active { transform: translateY(2px); box-shadow: 0 1px 0 #004A85; }
+.btn-green { background: var(--lego-green); color: #fff; box-shadow: 0 3px 0 #006B35; }
+.btn-yellow { background: var(--lego-yellow); color: #333; box-shadow: 0 3px 0 #B8960A; }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+
+/* ── FILTERS ── */
+.filters { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.filter-sel {
+  background: var(--panel); border: 1.5px solid var(--border);
+  color: var(--text); padding: 7px 10px; border-radius: var(--radius-sm);
+  font-size: 13px; outline: none; flex: 1; min-width: 120px;
+}
+.filter-sel:focus { border-color: var(--lego-blue); }
+
+/* ── STATS ROW ── */
+.stats-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.mini-stat {
+  background: var(--panel); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 8px 12px; flex: 1; min-width: 100px;
+  text-align: center;
+}
+.mini-stat .sv { font-size: 20px; font-weight: 900; color: var(--lego-red); }
+.mini-stat .sl { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+/* ── TABLE ── */
+.table-outer { overflow-x: auto; border-radius: var(--radius); border: 1.5px solid var(--border); background: var(--panel); box-shadow: var(--shadow); }
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+thead tr { background: linear-gradient(135deg, var(--lego-red), #9B1016); }
+thead th {
+  padding: 10px 10px; text-align: right; font-weight: 800;
+  color: #fff; white-space: nowrap; font-size: 11.5px;
+  border-bottom: 3px solid var(--lego-yellow);
+}
+tbody tr { border-bottom: 1px solid #EBEBEB; cursor: pointer; transition: background 0.12s; }
+tbody tr:hover { background: #FFF8E1 !important; }
+tbody tr:nth-child(even) { background: #FAFAF8; }
+tbody td { padding: 8px 10px; white-space: nowrap; font-size: 12.5px; }
+.td-num { color: var(--text3); font-size: 11px; }
+
+/* ── BADGES / CHIPS ── */
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 800; }
+.badge-open { background: #DCF5DC; color: #006B35; border: 1px solid #90DBA0; }
+.badge-sealed { background: #E8F0FB; color: #004A85; border: 1px solid #90B4E0; }
+.badge-glued { background: #FFF3CD; color: #856404; border: 1px solid #FFD700; }
+.badge-dup { background: #FFE0E0; color: #8B0000; }
+
+/* Store color chips */
+.store-chip { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+
+/* Theme color chips */
+.theme-chip { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+
+/* ── PAGINATION ── */
+.pagination { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 8px; font-size: 13px; color: var(--text2); }
+.page-btns { display: flex; gap: 5px; }
+.pg-btn {
+  background: var(--panel); border: 1.5px solid var(--border);
+  color: var(--text); padding: 5px 11px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 700;
+}
+.pg-btn.active { background: var(--lego-red); color: #fff; border-color: var(--lego-red); }
+.pg-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ── DETAIL MODAL ── */
+.modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 300;
+  align-items: flex-end; justify-content: center;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: var(--panel); border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 600px; max-height: 92vh;
+  overflow-y: auto; padding: 0 0 30px;
+  box-shadow: 0 -4px 30px rgba(0,0,0,0.2);
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-handle { width: 40px; height: 4px; background: #DDD; border-radius: 2px; margin: 12px auto 8px; }
+.modal-header { background: var(--lego-red); padding: 14px 20px; display: flex; justify-content: space-between; align-items: flex-start; }
+.modal-title { color: #fff; font-size: 16px; font-weight: 900; flex: 1; line-height: 1.3; }
+.modal-item-num { color: var(--lego-yellow); font-size: 13px; font-weight: 700; margin-top: 3px; }
+.modal-close { background: rgba(255,255,255,0.2); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+.modal-img-wrap { background: #F8F8F8; height: 200px; display: flex; align-items: center; justify-content: center; border-bottom: 2px solid var(--border); }
+.modal-img { max-height: 190px; max-width: 100%; object-fit: contain; }
+.modal-img-placeholder { font-size: 60px; opacity: 0.2; }
+
+.modal-body { padding: 16px 20px; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.detail-item { background: var(--bg3); border-radius: var(--radius-sm); padding: 10px 12px; }
+.detail-item.full { grid-column: 1 / -1; }
+.detail-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; font-weight: 700; }
+.detail-value { font-size: 14px; font-weight: 700; color: var(--text); }
+.detail-value a { color: var(--lego-blue); text-decoration: none; font-size: 13px; }
+.modal-actions { display: flex; gap: 10px; padding: 0 20px; }
+
+/* ── FORM MODAL ── */
+.form-modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 400;
+  align-items: center; justify-content: center; padding: 16px;
+}
+.form-modal-bg.open { display: flex; }
+.form-modal {
+  background: var(--panel); border-radius: var(--radius);
+  width: 100%; max-width: 540px; max-height: 90vh;
+  overflow-y: auto; padding: 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  border-top: 5px solid var(--lego-red);
+}
+.form-modal h2 { font-size: 16px; font-weight: 900; margin-bottom: 16px; display: flex; justify-content: space-between; color: var(--lego-red); }
+.form-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text3); }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fg { display: flex; flex-direction: column; gap: 4px; }
+.fg.full { grid-column: 1 / -1; }
+.fg label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; }
+.fg input, .fg select, .fg textarea {
+  background: var(--bg3); border: 1.5px solid var(--border);
+  color: var(--text); padding: 9px 10px; border-radius: var(--radius-sm);
+  font-size: 13px; outline: none; font-family: inherit;
+}
+.fg input:focus, .fg select:focus { border-color: var(--lego-blue); }
+.fg textarea { resize: vertical; min-height: 60px; }
+.form-actions { display: flex; gap: 10px; margin-top: 14px; justify-content: flex-end; }
+
+/* ── BILLS TABLE ── */
+.bills-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
+.bill-card { background: var(--panel); border-radius: var(--radius-sm); padding: 12px; border: 1.5px solid var(--border); text-align: center; }
+.bill-card .bv { font-size: 22px; font-weight: 900; color: var(--lego-blue); }
+.bill-card .bl { font-size: 10px; color: var(--text3); text-transform: uppercase; margin-top: 2px; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--lego-green); color: #fff; padding: 11px 22px;
+  border-radius: 30px; font-weight: 800; font-size: 13px;
+  z-index: 999; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+  box-shadow: 0 4px 15px rgba(0,166,80,0.4);
+}
+.toast.show { opacity: 1; }
+.toast.err { background: var(--lego-red); box-shadow: 0 4px 15px rgba(196,21,28,0.4); }
+
+/* Lego brick decoration */
+.brick-dots { display: flex; gap: 3px; }
+.brick-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.4); }
+
+@media (max-width: 500px) {
+  .detail-grid { grid-template-columns: 1fr 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .fg.full { grid-column: 1; }
+  .bills-summary { grid-template-columns: 1fr 1fr; }
+}
+</style>
 </head>
 <body>
-<div class="app">
-  <header class="top">
-    <button id="ballBtn" class="ball cleanBall" type="button">⚽️</button>
-    <div class="title">
-      <h1>قروب الكورة</h1>
-      <p>إدارة اللعبات • الحسابات • اللاعبين</p>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-brick">🧱</div>
+    <div>
+      <div class="logo-text">HSKW LEGO</div>
+      <div class="logo-sub">Collection Manager</div>
     </div>
-    <button id="topThemeBtn" class="topThemeBtn" type="button" aria-label="تبديل الوضع">🌙</button>
-  </header>
-
-  <div id="pageTitle" class="pageTitle">الرئيسية</div>
-
-  
-
-  
-<nav id="pagesMenu" class="pagesMenu">
-  <button type="button" data-page="home">🏠 الرئيسية</button>
-  <button type="button" data-page="accounts">💰 الحسابات</button>
-  <button type="button" data-page="players">👥 اللاعبين</button>
-  <button type="button" data-page="playerReport">🔎 كشف لاعب</button>
-  <button type="button" data-page="calendar">📅 التقويم</button>
-  <button type="button" data-page="teams">🟨 تقسيم الفريقين</button>
-  <button type="button" data-page="deposits">💳 الإيداعات</button>
-  <button type="button" data-page="playerTable">📊 جدول اللاعبين</button>
-  <button type="button" data-page="matchLog">🧾 سجل المباريات</button>
-  <button type="button" data-page="settings">⚙️ الإعدادات</button>
-</nav>
-
-<main>
-    <section id="home" class="page active">
-      <div class="card">
-        <input type="hidden" id="editingMatchId">
-        <div class="homeGrid">
-          <label>تاريخ اللعب<button id="matchDateBtn" class="fakeDateInput" type="button">--</button><input id="matchDate" type="hidden"></label>
-          <label>مكان اللعب<input id="place" placeholder=""></label>
-          <label>سعر الحجز<input id="bookingCost" type="number" step="0.001" inputmode="decimal"></label>
-          <div class="homeSubRow">
-            <label>مبلغ إضافي<input id="extraFee" type="number" step="0.001" inputmode="decimal" placeholder="0"></label>
-            <label class="neededLabel">عدد اللاعبين<input id="neededPlayers" type="number" inputmode="numeric"></label>
-          </div>
-        </div>
-        <div class="lineInfo homeInfoGrid">
-          <span>إجمالي القطية: <b id="totalCostDisplay">0.000</b></span>
-          <span>قطية اللاعب: <b id="pricePerPlayer">0.000</b></span>
-        </div>
-        <h3>المشاركون</h3>
-        <div id="matchPlayers" class="checkList"></div>
-        <h3>إضافة ضيف</h3>
-        <div class="grid2">
-          <label>اسم الضيف<input id="guestName"></label>
-          <label>العضو<select id="guestOwner"></select></label>
-        </div>
-        <div class="addGuestLine">
-          <button id="addGuestBtn" type="button">إضافة ضيف</button>
-          <div class="registeredBadge">المشاركون: <b id="registeredCount">0 لاعب</b></div>
-        </div>
-        <div id="tempGuests" class="miniList"></div>
-        <div id="matchParticipantsPreview" class="lineInfo" style="display:none"></div>
-        <div class="actions">
-          <button id="saveMatchBtn" class="primary" type="button">حفظ اللعبة</button>
-          <button id="clearMatchBtn" type="button">تفريغ</button>
-        </div>
-      </div>
-    </section>
-
-    <section id="players" class="page">
-      <div class="card">
-        <div class="addLine">
-          <input id="playerName" placeholder="اسم اللاعب">
-          <button id="addPlayerBtn" class="primary" type="button">إضافة</button>
-        </div>
-        <div id="playersList" class="compactList"></div>
-      </div>
-      <div class="card">
-        <div class="sectionTitleLine"><b>تعديل / حذف لاعب</b></div>
-        <div class="grid2">
-          <select id="editPlayerSelect"></select>
-          <input id="editPlayerName" placeholder="الاسم الجديد">
-        </div>
-        <div class="actions">
-          <button id="renamePlayerBtn" type="button">حفظ التعديل</button>
-          <button id="deletePlayerBtn" class="danger" type="button">حذف اللاعب</button>
-        </div>
-      </div>
-    </section>
-
-    <section id="playerTable" class="page">
-      <div id="playerTableWrap" class="card tableCard"></div>
-    </section>
-
-    <section id="playerReport" class="page">
-      <div class="card">
-        <label>اختر لاعب<select id="playerFilterSelect"></select></label>
-        <div id="playerFilterContent"></div>
-      </div>
-    </section>
-
-    <section id="calendar" class="page">
-      <div class="card">
-        <div class="monthNav">
-          <button id="prevMonth" type="button">‹</button>
-          <b id="calendarMonthTitle"></b>
-          <button id="nextMonth" type="button">›</button>
-        </div>
-        <div id="monthCalendar"></div>
-      </div>
-      <div class="card">
-        <h3 id="calendarSelectedTitle">المشاركون</h3>
-        <div id="calendarList"></div>
-      </div>
-    </section>
-
-    <section id="teams" class="page">
-      <div class="card">
-        <label>اختر لعبة<select id="teamsMatchSelect"></select></label>
-        <div id="teamsPlayers" class="teamPickWrap"></div>
-        <button id="saveTeamsBtn" class="primary wide" type="button">حفظ الفريقين</button>
-      </div>
-      <div id="teamsPreview"></div>
-    </section>
-
-    <section id="deposits" class="page">
-      <div class="card">
-        <input type="hidden" id="editingDepositId">
-        <div class="grid2">
-          <label>اللاعب<select id="depositPlayer"></select></label>
-          <label>التاريخ<button id="depositDateBtn" class="fakeDateInput" type="button">--</button><input id="depositDate" type="hidden"></label>
-          <label>المبلغ<input id="depositAmount" type="number" step="0.001" inputmode="decimal"></label>
-          <label>النوع<select id="depositType"><option value="in">إيداع</option><option value="initial">إيداع مبدئي</option><option value="out">مديونية</option><option value="late">تأخير</option></select></label>
-        </div>
-        <div class="actions">
-          <button id="saveDepositBtn" class="primary" type="button">حفظ</button>
-        </div>
-      </div>
-      <div id="depositsList" class="card"></div>
-    </section>
-
-    <section id="accounts" class="page">
-      <div id="accountsContent"></div>
-    </section>
-
-    <section id="matchLog" class="page">
-      <div id="matchLogList"></div>
-    </section>
-
-    <section id="settings" class="page">
-      
-      <div class="card">
-        <h3>اسم ووصف التطبيق</h3>
-        <label>اسم التطبيق<input id="appTitleInput" placeholder="قروب الكورة"></label>
-        <label>شرح / وصف التطبيق<input id="appDescInput" placeholder="إدارة اللعبات • الحسابات • اللاعبين"></label>
-        <button id="saveAppInfoBtn" class="primary wide" type="button">حفظ الاسم والوصف</button>
-      </div>
-
-      <div class="card">
-        <div class="settingsActions">
-          <button id="exportDataBtn" type="button">تصدير البيانات</button>
-          <button id="exportExcelBtn" type="button">تصدير Excel</button>
-          <label class="importLabel">استيراد البيانات<input id="importDataInput" type="file" accept="application/json"></label>
-        </div>
-      </div>
-      <div class="card">
-        <div class="sectionTitleLine pageOrderHeader"><div class="sectionTitleLine pageOrderHeader"><h3>ترتيب الصفحات</h3><button id="renamePagesBtn" type="button" onclick="openRenamePages()">إعادة تسمية الصفحات</button></div></div></div></div></div>
-        <div id="pageOrderList"></div>
-      </div>
-    </section>
-  </main>
-</div>
-
-<div id="adjustEditModal" class="modal">
-  <div class="modalCard">
-    <div class="sectionTitleLine"><b>تعديل الخصم / الإضافة</b><button id="closeAdjustModal" type="button">إغلاق</button></div>
-    <p class="muted">اضغط على أي سطر لإزالته، ثم اضغط حفظ.</p>
-    <div id="adjustEditTable" class="compactTable"></div>
-    <button id="saveAdjustModal" class="primary wide" type="button">حفظ</button>
+  </div>
+  <div class="header-stats">
+    <div class="stat-chip" id="hdr-count">— sets</div>
+    <div class="stat-chip" id="hdr-spend">— KWD</div>
   </div>
 </div>
 
-<script src="app.js?v=color_verified_20260608_2"></script>
+<!-- TABS -->
+<div class="nav-tabs-wrap">
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="switchTab('everything')" id="tab-everything">🧱 Everything</div>
+    <div class="nav-tab" onclick="switchTab('bills')" id="tab-bills">🛒 Bills (2)</div>
+    <div class="nav-tab" onclick="switchTab('dashboard')" id="tab-dashboard">📊 Dashboard</div>
+  </div>
+</div>
+
+<div class="content" id="mainContent"></div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-bg" id="detailModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header" id="detailHeader">
+      <div>
+        <div class="modal-title" id="detailTitle"></div>
+        <div class="modal-item-num" id="detailNum"></div>
+      </div>
+      <button class="modal-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="modal-img-wrap" id="detailImgWrap">
+      <div class="modal-img-placeholder">🧱</div>
+    </div>
+    <div class="modal-body" id="detailBody"></div>
+    <div class="modal-actions" id="detailActions"></div>
+  </div>
+</div>
+
+<!-- FORM MODAL -->
+<div class="form-modal-bg" id="formModal">
+  <div class="form-modal">
+    <h2 id="formTitle">Add Set <button class="form-close" onclick="closeForm()">✕</button></h2>
+    <div id="formBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-(function(){
-  const titles = {
-    home:'الرئيسية',
-    accounts:'الحسابات',
-    players:'اللاعبين',
-    playerReport:'كشف لاعب',
-    calendar:'التقويم',
-    teams:'تقسيم الفريقين',
-    deposits:'الإيداعات',
-    playerTable:'جدول اللاعبين',
-    matchLog:'سجل المباريات',
-    settings:'الإعدادات'
+// ── DATA ──────────────────────────────────────────────────
+const _D = JSON.parse(`{"everything":[["✳️",1,10218,"Advanced models","Modular Buildings Collection","Pet Shop",2032,80.9111,263.64,null,null,null,null,null,null,"mom"],["✳️",2,10232,"Creator Expert","Modular Buildings Collection","Palace Cinema",2196,91.4102,297.85,null,null,null,null,null,null,1],["✳️",3,10243,"Creator Expert","Modular Buildings Collection","Parisian Restaurant",2469,92.3309,300.85,null,null,null,null,null,null,22],["✳️",4,10246,"Creator Expert","Modular Buildings Collection","Detective's Office",2262,118.4818,386.06,null,null,null,null,null,null,22],["✳️",5,10260,"Creator Expert","Modular Buildings Collection","Downtown Diner",2480,86.6348,282.29,null,null,null,null,null,null,23],["✳️",6,21030,"ARCHITECTURE","Landmark Series","United States Capitol Building",1032,40.1671,130.88,null,null,null,null,null,null,"mom"],["✳️",7,21127,"Minecraft","Minifig-scale","The Fortress",984,74.7762,243.65,null,null,null,null,null,null,"*"],["✳️",8,21309,"Ideas","NASA","NASA Apollo Saturn V",1969,43.6013,142.07,null,null,null,null,null,null,12],["✳️",9,31028,"CREATOR","3 in 1","Sea Plane",53,2.8051,9.14,null,null,null,null,null,null,"box"],["✳️",10,31038,"CREATOR","3 in 1","Changing Seasons",536,19.6048,63.88,null,null,null,null,null,null,24],["✳️",11,31050,"CREATOR","3 in 1","Corner Deli",467,20.0805,65.43,null,null,null,null,null,null,17],["✳️",12,31051,"CREATOR","3 in 1","Lighthouse Point",528,24.0886,78.49,null,null,null,null,null,null,20],["✳️",13,31052,"CREATOR","3 in 1","Vacation Getaways",792,28.6829,93.46,null,null,null,null,null,null,"*"],["✳️",14,31077,"CREATOR","3 in 1","Modular Sweet Surprises",396,11.4259,37.23,null,null,null,null,null,null,"mom"],["✳️",15,31081,"CREATOR","3 in 1","Modular Skate House",422,14.1021,45.95,null,null,null,null,null,null,"mom"],["✳️",16,41039,"FRIENDS","Farm","Sunshine Ranch",721,36.828,120,null,null,null,null,null,null,"*"],["✳️",17,41073,"Elves",null,"Naida's Epic Adventure Ship",312,16.3271,53.2,null,null,null,null,null,null,"mom"],["✳️",18,41085,"FRIENDS","Vet","Vet Clinic",192,11.0085,35.87,null,null,null,null,null,null,"mom"],["✳️",19,41101,"FRIENDS","Heartlake City","Heartlake Grand Hotel",1552,56.4082,183.8,null,null,null,null,null,null,"mom"],["✳️",20,41130,"FRIENDS","Amusement Park","Amusement Park Roller Coaster",1124,44.8903,146.27,null,null,null,null,null,null,"mom"],["✳️",21,41340,"FRIENDS","Heartlake City","Friendship House",722,33.5963,109.47,null,null,null,null,null,null,26],["✳️",22,42028,"TECHNIC",null,"Bulldozer",617,30.3432,98.87,null,null,null,null,null,null,"mom"],["✳️",23,42037,"TECHNIC",null,"Formula Off-Roader",494,16.9102,55.1,null,null,null,null,null,null,"mom"],["✳️",24,42057,"TECHNIC",null,"Ultralight Helicopter",199,8.0438,26.21,null,null,null,null,null,null,"mom"],["✳️",25,60016,"CITY","Great Vehicles","Tanker Truck",191,20.6728,67.36,null,null,null,null,null,null,"mom"],["✳️",26,60057,"CITY","Great Vehicles","Camper Van",195,13.8443,45.11,null,null,null,null,null,null,"mom"],["✳️",27,60060,"CITY","Great Vehicles","Auto Transporter",350,20.0743,65.41,null,null,null,null,null,null,"mom"],["✳️",28,60071,"CITY","Swamp Police","Hovercraft Arrest",331,13.1046,42.7,null,null,null,null,null,null,"mom"],["✳️",29,60092,"CITY","Deep Sea Explorers","Deep Sea Submarine",274,16.5634,53.97,null,null,null,null,null,null,"mom"],["✳️",30,60093,"CITY","Deep Sea Explorers","Deep Sea Helicopter",388,32.4547,105.75,null,null,null,null,null,null,"box"],["✳️",31,60103,"CITY","Air Show","Airport Air Show",670,23.5607,76.77,null,null,null,null,null,null,"box"],["✳️",32,60104,"CITY","Airport","Airport Passenger Terminal",694,63.7523,207.73,null,null,null,null,null,null,12],["✳️",33,60108,"CITY","Fire","Fire Response Unit",257,7.562,24.64,null,null,null,null,null,null,"box"],["✳️",34,60109,"CITY","Fire","Fire Boat",412,31.4511,102.48,null,null,null,null,null,null,"box"],["✳️",35,60130,"CITY","Prison Island","Prison Island",754,53.9561,175.81,null,null,null,null,null,null,"mom"],["✳️",36,60147,"CITY","Harbor","Fishing Boat",144,14.0131,45.66,null,null,null,null,null,null,"mom"],["✳️",37,60148,"CITY","Racing","ATV Race Team",239,8.3477,27.2,null,null,null,null,null,null,"mom"],["✳️",38,60159,"CITY","Jungle","Jungle Halftrack Mission",378,14.0775,45.87,null,null,null,null,null,null,"mom"],["✳️",39,60174,"CITY","Mountain Police","Mountain Police Headquarters",663,35.2996,115.02,null,null,null,null,null,null,"mom"],["✳️",40,60289,"CITY","Great Vehicles","Airshow Jet Transporter",281,7.6786,25.02,null,null,null,null,null,null,"mom"],["✳️",41,70316,"Nexo Knights","Season 1","Jestro's Evil Mobile",658,24.2328,78.96,null,null,null,null,null,null,"mom"],["✳️",42,70317,"Nexo Knights","Season 1","The Fortrex",1140,41.6525,135.72,null,null,null,null,null,null,"mom"],["✳️",43,70348,"Nexo Knights","Season 3","Lance's Twin Jouster",216,13.832,45.07,null,null,null,null,null,null,"mom"],["✳️",44,70413,"Pirates",null,"The Brick Bounty",745,77.0043,250.91,null,null,null,null,null,null,"mom"],["✳️",45,70592,"NINJAGO","Day of the Departed","Salvage M.E.C.",439,15.3603,50.05,null,null,null,null,null,null,"mom"],["✳️",46,70593,"NINJAGO","Skybound","The Green NRG Dragon",567,29.6465,96.6,null,null,null,null,null,null,"mom"],["✳️",47,70594,"NINJAGO","Skybound","The Lighthouse Siege",767,41.9133,136.57,null,null,null,null,null,null,"mom"],["✳️",48,70595,"NINJAGO","Day of the Departed","Ultra Stealth Raider",1093,64.228,209.28,null,null,null,null,null,null,"mom"],["✳️",49,70596,"NINJAGO","Day of the Departed","Samurai X Cave Chaos",1253,69.7215,227.18,null,null,null,null,null,null,"mom"],["✳️",50,70601,"NINJAGO","Skybound","Sky Shark",221,14.9184,48.61,null,null,null,null,null,null,"mom"],["✳️",51,70602,"NINJAGO","Skybound","Jay's Elemental Dragon",350,28.9898,94.46,null,null,null,null,null,null,"mom"],["✳️",52,70603,"NINJAGO","Skybound","Raid Zeppelin",294,24.9295,81.23,null,null,null,null,null,null,"mom"],["✳️",53,70604,"NINJAGO","Skybound","Tiger Widow Island",450,18.9818,61.85,null,null,null,null,null,null,"mom"],["✳️",54,70605,"NINJAGO","Skybound","Misfortune's Keep",754,43.7118,142.43,null,null,null,null,null,null,"mom"],["✳️",55,70607,"NINJAGO","The LEGO Ninjago Movie","City Chase",233,7.0986,23.13,null,null,null,null,null,null,"mom"],["✳️",56,70614,"NINJAGO","The LEGO Ninjago Movie","Lightning Jet",876,23.7142,77.27,null,null,null,null,null,null,"mom"],["✳️",57,70625,"NINJAGO","The Hands of Time","Samurai VXL",428,32.2583,105.11,null,null,null,null,null,null,"mom"],["✳️",58,70626,"NINJAGO","The Hands of Time","Dawn of Iron Doom",704,114.9034,374.4,null,null,null,null,null,null,"mom"],["✳️",59,70627,"NINJAGO","The Hands of Time","Dragon's Forge",1137,58.6639,191.15,null,null,null,null,null,null,"mom"],["✳️",60,70629,"NINJAGO","The LEGO Ninjago Movie","Piranha Attack",217,8.0837,26.34,null,null,null,null,null,null,"mom"],["✳️",61,70632,"NINJAGO","The LEGO Ninjago Movie","Quake Mech",1202,41.1338,134.03,null,null,null,null,null,null,"mom"],["✳️",62,70633,"NINJAGO","Spinjitzu Masters","Spinjitzu Master",61,5.294,17.25,null,null,null,null,null,null,"mom"],["✳️",63,70724,"NINJAGO","Rebooted","NinjaCopter",516,35.2475,114.85,null,null,null,null,null,null,"mom"],["✳️",64,70735,"NINJAGO","Possession","Ronin R.E.X.",547,35.2935,115,null,null,null,null,null,null,"mom"],["✳️",65,70738,"NINJAGO","Possession","Final Flight of Destiny's Bounty",1253,61.3186,199.8,null,null,null,null,null,null,"mom"],["✳️",66,70741,"NINJAGO","Airjitzu","Airjitzu Cole Flyer",47,5.6807,18.51,null,null,null,null,null,null,"mom"],["✳️",67,70744,"NINJAGO","Airjitzu","Airjitzu Wrayth Flyer",43,9.784,31.88,null,null,null,null,null,null,"mom"],["✳️",68,70746,"NINJAGO","Tournament of Elements","Condrai Copter Attack",311,24.2175,78.91,null,null,null,null,null,null,"mom"],["✳️",69,70747,"NINJAGO","Tournament of Elements","Boulder Blaster",236,13.5711,44.22,null,null,null,null,null,null,"mom"],["✳️",70,70748,"NINJAGO","Tournament of Elements","Titanium Dragon",360,24.552,80,null,null,null,null,null,null,"mom"],["✳️",71,70751,"NINJAGO","General","Temple of Airjitzu",2028,116.9074,380.93,null,null,null,null,null,null,"mom"],["✳️",72,70755,"NINJAGO","Tournament of Elements","Jungle Raider",188,16.0202,52.2,null,null,null,null,null,null,"mom"],["✳️",73,70778,"Bionicle","Protectors","Protector of Jungle",64,16.1859,52.74,null,null,null,null,null,null,"mom"],["✳️",74,71016,"The Simpsons",null,"Kwik-E-Mart",2179,116.6251,380.01,null,null,null,null,null,null,24],["✳️",75,75040,"STAR WARS","Episode III","General Grievous' Wheel Bike",261,24.4998,79.83,null,null,null,null,null,null,"mom"],["✳️",76,75042,"STAR WARS","Episode III","Droid Gunship",439,28.066,91.45,null,null,null,null,null,null,"mom"],["✳️",77,75050,"STAR WARS","Episode VI","B-Wing",448,39.6545,129.21,null,null,null,null,null,null,"mom"],["✳️",78,75059,"STAR WARS","Ultimate Collector Series","Sandcrawler",3296,142.0855,462.97,null,null,null,null,null,null,"mom"],["✳️",79,75084,"STAR WARS","Rebels","Wookiee Gunship",570,42.2601,137.7,null,null,null,null,null,null,"mom"],["✳️",80,75087,"STAR WARS","The Clone Wars","Anakin's Custom Jedi Starfighter",370,44.0402,143.5,null,null,null,null,null,null,"mom"],["✳️",81,75103,"STAR WARS","The Force Awakens","First Order Transporter",792,47.413,154.49,null,null,null,null,null,null,"mom"],["✳️",82,75105,"STAR WARS","The Force Awakens","Millennium Falcon",1329,46.7347,152.28,null,null,null,null,null,null,"mom"],["✳️",83,75135,"STAR WARS","Episode III","Obi-Wan's Jedi Interceptor",215,28.3361,92.33,null,null,null,null,null,null,"mom"],["✳️",84,75147,"STAR WARS","Original Content","StarScavenger",558,21.8758,71.28,null,null,null,null,null,null,"mom"],["✳️",85,75155,"STAR WARS","Rogue One","Rebel U-wing Fighter",659,52.6794,171.65,null,null,null,null,null,null,"mom"],["✳️",86,75172,"STAR WARS","Rogue One","Y-wing Starfighter",691,33.4889,109.12,null,null,null,null,null,null,"mom"],["✳️",87,75187,"STAR WARS","The Last Jedi","BB-8",1106,44.1445,143.84,null,null,null,null,null,null,"mom"],["✳️",88,75256,"STAR WARS","The Rise of Skywalker","Kylo Ren's Shuttle",1005,42.4934,138.46,null,null,null,null,null,null,"mom"],["✳️",89,75904,"Scooby-Doo",null,"Mystery Mansion",860,62.7795,204.56,null,null,null,null,null,null,"mom"],["✳️",90,75915,"Jurassic World",null,"Pteranodon Capture",174,14.7435,48.04,null,null,null,null,null,null,"mom"],["✳️",91,75917,"Jurassic World",null,"Raptor Rampage",324,33.4091,108.86,null,null,null,null,null,null,"mom"],["✳️",92,75919,"Jurassic World",null,"Indominus Rex Breakout",1156,111.3096,362.69,null,null,null,null,null,null,"mom"],["✳️",93,76054,"DC Comics Super Heroes","Batman","Scarecrow Harvest of Fear",563,18.8774,61.51,null,null,null,null,null,null,"mom"],["✳️",94,76057,"Marvel Super Heroes","Spider-Man","Web Warriors Ultimate Bridge Battle",1092,61.9815,201.96,null,null,null,null,null,null,"mom"],["✳️",95,79006,"The Lord of the Rings","The Fellowship of the Ring","The Council of Elrond",243,36.871,120.14,null,null,null,null,null,null,"mom"],["✳️",96,79017,"The Hobbit","The Battle of the Five Armies","The Battle of Five Armies",472,65.3636,212.98,null,null,null,null,null,null,"mom"],["Open",97,41339,"FRIENDS","Great Outdoors","Mia's Camper Van",488,30,30,null,"LEGO Store",30,30,"2023-02-24",0,25],["Open",98,21028,"ARCHITECTURE","Skylines","New York City",598,16.5,16.5,null,"LEGO Store",16.5,16.5,"2023-02-24",0,"Awrad"],["Open",99,76989,"ICONS","Licensed","Horizon Forbidden West: Tallneck",1222,29,29,null,"Fantacy World",29,29,"2023-02-24",0,"Naji"],[null,100,10294,"ICONS","Miscellaneous","Titanic",9090,269.95,269.95,null,"LEGO Store",403.45,350.85,"2023-02-24",0,61],[null,101,10264,"creator expert","Modular Buildings Collection","Corner Garage",2569,80.9,107.75,null,"LEGO Store",403.45,350.85,"2023-02-24",0.2492,23],[null,102,40577,"Harry Potter","Promotional","Hogwarts: Grand Staircase",224,0,6.15,null,"LEGO Store",403.45,350.85,"2023-02-24",1,67],["Open",103,40335,"ideas","Promotional","Space Rocket Ride",154,0,4.6,null,"LEGO Store",403.45,350.85,"2023-02-24",1,67],[null,104,40528,"Promotional",null,"Brand Retail Store",402,0,15,null,"LEGO Store",403.45,350.85,"2023-02-24",1,52],[null,105,10307,"ICONS","Landmarks","Eiffel tower",10001,279,279,null,"LEGO Store",458.95,414,"2023-02-24",0,62],["Open",106,42131,"technic","Licensed","D11 Bulldozer",3854,135,179.95,null,"LEGO Store",458.95,414,"2023-02-24",0.2498,28],[null,107,10276,"ICONS","Landmarks","Colosseum",9036,187.5,249.95,null,"LEGO Store",432.9,315.6,"2023-02-24",0.2498,54],["Open",108,75290,"STAR WARS","Master Builder Series","Mos Eisley Cantina",3187,128.1,182.95,null,"LEGO Store",432.9,315.6,"2023-02-24",0.2998,27],["Open",109,76240,"DC Comics Super Heroes","The Dark Knight Trilogy","DC Batman Batmobile Tumbler",2049,66.8,89.95,null,"LEGO Store",89.95,66.8,"2023-02-25",0.2574,"Jasim"],[null,110,71390,"Super Mario","Expansion Set","Reznor Knockdown",862,16.5,27.5,null,"Fantacy World",178.8,151.99,"2023-03-17",0.4,"Fares"],["Open",111,71360,"Super Mario","Starter Course","Adventures with Mario",231,20.95,20.95,null,"Fantacy World",178.8,151.99,"2023-03-17",0,"Fares"],[null,112,71407,"Super Mario","Expansion Set","Cat Peach Suit and Frozen Tower",494,17.47,24.95,null,"Fantacy World",178.8,151.99,"2023-03-17",0.2998,"Fares"],[null,113,71409,"Super Mario","Expansion Set","Big Spike’s Cloudtop Challenge",540,18.86,20.95,null,"Fantacy World",178.8,151.99,"2023-03-17",0.0998,"Fares"],["Open",114,42127,"technic","Licensed","The Batman - Batmobile",1360,28.76,35,null,"Fantacy World",178.8,151.99,"2023-03-17",0.1783,76],[null,115,75347,"STAR WARS","Episode VI","TIE Bomber",625,20.5,20.5,null,"Fantacy World",178.8,151.99,"2023-03-17",0,50],[null,116,76402,"Harry Potter","Chamber of Secrets","Hogwarts: Dumbledore’s Office",654,28.95,28.95,null,"Fantacy World",178.8,151.99,"2023-03-17",0,88],[null,117,75192,"STAR WARS","Ultimate Collector Series","Millennium Falcon",7541,238.5,499.9,null,"Fantacy World",499.9,238.5,"2023-03-25",0.5229,60],[null,118,41704,"FRIENDS","Heartlake City","Main Street Building",1682,40.5,53.95,null,"LEGO Store",285.4,211.45,"2023-03-30",0.2493,64],["Open",119,41685,"FRIENDS","Amusement Park","Magical Funfair Roller Coaster",974,27,36,null,"LEGO Store",285.4,211.45,"2023-03-30",0.25,12],["Open",120,10293,"ICONS","Winter Village Collection","Santa’s Visit",1445,31.95,39.95,null,"LEGO Store",285.4,211.45,"2023-03-30",0.2003,"Naji"],["Open",121,75968,"Harry Potter","Chamber of Secrets","4 Privet Drive",797,21.8,29,null,"LEGO Store",285.4,211.45,"2023-03-30",0.2483,"*"],["Open",122,10275,"ICONS","Winter Village Collection","Elf Club House",1197,35.2,46.95,null,"LEGO Store",285.4,211.45,"2023-03-30",0.2503,"Awrad"],[null,123,43181,"Disney","Raya and the Last Dragon","Raya and the Heart Palace",610,30,39.95,null,"LEGO Store",285.4,211.45,"2023-03-30",0.2491,12],[null,124,76187,"Marvel Super Heroes","Spider-Man","Venom",565,25,35,null,"LEGO Store",285.4,211.45,"2023-03-30",0.2857,49],[null,125,40335,"ideas","Promotional","Space Rocket Ride",154,0,4.6,null,"LEGO Store",285.4,211.45,"2023-03-30",1,"box"],[null,126,75304,"STAR WARS","Helmet Collection","Darth Vader Helmet",834,22.455,24.95,null,"Fantacy World",169,152.1,"2023-03-30",0.1,46],["Open",127,75349,"STAR WARS","Helmet Collection","Captain Rex Helmet",854,20.655,22.95,null,"Fantacy World",169,152.1,"2023-03-30",0.1,"Naji"],["Open",128,75350,"STAR WARS","Helmet Collection","Clone Commander Cody Helmet",766,20.655,22.95,null,"Fantacy World",169,152.1,"2023-03-30",0.1,"?"],[null,129,75328,"STAR WARS","Helmet Collection","The Mandalorian Helmet",584,20.655,22.95,null,"Fantacy World",169,152.1,"2023-03-30",0.1,46],[null,130,75326,"STAR WARS","The Book of Boba Fett","Boba Fett's Throne Room",732,33.255,36.95,null,"Fantacy World",169,152.1,"2023-03-30",0.1,50],[null,131,76916,"Speed Champions","Porsche","Porsche 963",280,7.425,8.25,null,"Fantacy World",169,152.1,"2023-03-30",0.1,73],[null,132,76915,"Speed Champions","Pagani","Pagani Utopia",249,7.425,8.25,null,"Fantacy World",169,152.1,"2023-03-30",0.1,73],["Open",133,76914,"Speed Champions","Ferrari","Ferrari 812 Competizione",261,7.425,8.25,null,"Fantacy World",169,152.1,"2023-03-30",0.1,14],[null,134,76910,"Speed Champions","Aston Martin","Aston Martin Valkyrie AMR Pro & Aston",592,12.15,13.5,null,"Fantacy World",169,152.1,"2023-03-30",0.1,73],[null,135,76901,"Speed Champions","Toyota","Toyota GR Supra",299,8.055,8.95,null,"Fantacy World",95.15,85.63,"2023-04-05",0.1,73],[null,136,76908,"Speed Champions","Lamborghini","Lamborghini Countach",262,6.75,7.5,null,"Fantacy World",95.15,85.63,"2023-04-05",0.1,73],[null,137,76191,"Marvel Super Heroes","Miscellaneous","Infinity Gauntlet",590,25.875,28.75,null,"Fantacy World",95.15,85.63,"2023-04-05",0.1,49],[null,138,21058,"Architecture","Landmark Series","The Great Pyramid of Giza",1476,44.95,49.95,null,"Fantacy World",95.15,85.63,"2023-04-05",0.1001,65],[null,139,10305,"ICONS","Castle System","Lion Knight's Castle",4514,152.1,169,null,"LEGO Store",739.05,601,"2023-03-30",0.1,56],[null,140,75978,"Harry Potter","General","Diagon Alley",5544,170.95,189.95,null,"LEGO Store",739.05,601,"2023-03-30",0.1,59],[null,141,10273,"ICONS","Fairground Collection","Haunted House",3231,98.95,109.95,null,"LEGO Store",739.05,601,"2023-03-30",0.1,21],[null,142,75331,"STAR WARS","Ultimate Collector Series","The Razor Crest",6187,179,249,null,"LEGO Store",739.05,601,"2023-03-30",0.2811,53],["Open",143,40577,"Harry Potter","Promotional","Hogwarts: Grand Staircase",224,0,6.15,null,"LEGO Store",739.05,601,"2023-03-30",1,"box"],[null,144,40528,"Promotional",null,"Brand Retail Store",402,0,15,null,"LEGO Store",739.05,601,"2023-03-30",1,52],[null,145,76918,"Speed Champions","McLaren","McLaren Solus GT & McLaren F1 LM",581,12.15,13.5,null,"Fantacy World",372.6,335.34,"2023-04-10",0.1,14],[null,146,76909,"Speed Champions","Mercedes","Mercedes-AMG F1 W12 E Performance & Mercedes-AMG Project One",564,11.655,12.95,null,"Fantacy World",372.6,335.34,"2023-04-10",0.1,73],["Open",147,76218,"Marvel Super Heroes","Miscellaneous","Sanctum Sanctorum",2708,71.955,79.95,null,"Fantacy World",372.6,335.34,"2023-04-10",0.1,19],[null,148,75345,"STAR WARS",null,"501st Clone Troopers Battle Pack",119,5.625,6.25,null,"Fantacy World",372.6,335.34,"2023-04-10",0.1,50],[null,149,10312,"ICONS","Landmarks","Jazz Club",2899,63,70,null,"Fantacy World",372.6,335.34,"2023-04-10",0.1,19],["Open",150,10278,"ICONS","Landmarks","Police Station",2923,58.455,64.95,null,"Fantacy World",372.6,335.34,"2023-04-10",0.1,17],[null,151,10303,"ICONS","Miscellaneous","Loop Coaster",3756,112.5,125,null,"Fantacy World",372.6,335.34,"2023-04-10",0.1,58],[null,152,41702,"FRIENDS","Summer","Canal Houseboat",737,32.85,36.5,null,"Jarir Book",103,63.45,"2023-04-13",0.1,"4-24-74"],[null,153,21057,"Architecture","Skylines","Singapore",827,0,32.5,null,"Jarir Book",103,63.45,"2023-04-13",1,"Mama"],[null,154,11011,"Classic","Bricks","Bricks and Animals",1500,30.6,34,null,"Jarir Book",103,63.45,"2023-04-13",0.1,81],[null,155,11008,"Classic","Bricks","Bricks and Houses",270,11.07,12.3,null,"Jarir Book",36.9,22.14,"2023-04-13",0.1,52],[null,156,42135,"technic","Licensed","Monster Jam El Toro Loco",247,0,12.3,null,"Jarir Book",36.9,22.14,"2023-04-13",1,73],[null,157,41444,"FRIENDS","Heartlake City","Heartlake City Organic Café",314,11.07,12.3,null,"Jarir Book",36.9,22.14,"2023-04-13",0.1,"Awrad"],[null,158,21034,"Architecture","Skylines","London",468,22.05,24.5,null,"Jarir Book",65.7,43.2,"2023-04-13",0.1,"Mama"],[null,159,10696,"Classic","Bricks","Medium Creative Brick Box",484,0,17.7,null,"Jarir Book",65.7,43.2,"2023-04-13",1,83],[null,160,10698,"Classic","Bricks","Large Creative Brick Box",790,21.15,23.5,null,"Jarir Book",65.7,43.2,"2023-04-13",0.1,83],[null,161,75892,"Speed Champions","McLaren","McLaren Senna",219,7,10,null,"BRICKS",97,64,"2023-04-14",0.3,73],[null,162,21051,"Architecture","Skylines","Tokyo",547,19,29,null,"BRICKS",97,64,"2023-04-14",0.3448,"Mama"],[null,163,21052,"Architecture","Skylines","Dubai",740,19,29,null,"BRICKS",97,64,"2023-04-14",0.3448,"Mama"],[null,164,21044,"Architecture","Skylines","Paris",649,19,29,null,"BRICKS",97,64,"2023-04-14",0.3448,"Mama"],[null,165,76405,"Harry Potter","General","HOGWARTS EXPRESS COLLECTORS EDITION",5129,154,219,null,"Fantacy World",219,154,"2023-04-26",0.2968,"Awrad"],[null,166,11011,"Classic","Bricks","Bricks and Animals",1500,30.6,34,null,"Jarir Book",34,30.6,"2023-04-27",0.1,81],[null,167,76917,"Speed Champions","Nissan","2 Fast 2 Furious Nissan Skyline GT-R (R34)",319,8.25,8.25,null,"Fantacy World",8.25,8.25,"2023-05-03",0,14],["Open",168,76912,"Speed Champions","Dodge","Fast & Furious 1970 Dodge Charger R/T",345,7.5,7.5,null,"Fantacy World",16.45,16.45,"2023-05-04",0,14],[null,169,76900,"Speed Champions","Koenigsegg","Koenigsegg Jesko",280,8.95,8.95,null,"Fantacy World",16.45,16.45,"2023-05-04",0,73],["Open",170,42137,"technic","Licensed","Formula E Porsche 99x Electric",422,1,17.95,null,"Friday Market",59.95,9,"2023-05-12",0.9443,73],[null,171,41363,"FRIENDS","Great Outdoors","Mia's Forest Adventures",134,2,6,null,"Friday Market",59.95,9,"2023-05-12",0.6667,52],[null,172,41363,"FRIENDS","Great Outdoors","Mia's Forest Adventures",134,2,6,null,"Friday Market",59.95,9,"2023-05-12",0.6667,52],[null,173,41098,"FRIENDS","Pets","Emma's Tourist Kiosk",98,1,11,null,"Friday Market",59.95,9,"2023-05-12",0.9091,51],[null,174,41383,"FRIENDS","Pets","Olivia's Hamster Playground",81,1,8,null,"Friday Market",59.95,9,"2023-05-12",0.875,51],[null,175,60184,"CITY","Mining","Mining Team",82,1,8,null,"Friday Market",59.95,9,"2023-05-12",0.875,"box"],[null,176,11012,"Classic","Creative Bricks","Creative White Bricks",60,1,3,null,"Friday Market",59.95,9,"2023-05-12",0.6667,48],[null,177,60314,"CITY","Police","Ice Cream Truck Police Chase",317,14.67,16.3,null,"Jarir Book",34,30.6,"2023-05-15",0.1,82],[null,178,41743,"FRIENDS","Heartlake City","Hair Salon",401,15.93,17.7,null,"Jarir Book",34,30.6,"2023-05-15",0.1,47],[null,179,41363,"FRIENDS","Great Outdoors","Mia's Forest Adventures",134,2,6,null,"Friday Market",29,7,"2023-05-19",0.6667,52],[null,180,41363,"FRIENDS","Great Outdoors","Mia's Forest Adventures",134,2,6,null,"Friday Market",29,7,"2023-05-19",0.6667,52],[null,181,41383,"FRIENDS","Pets","Olivia's Hamster Playground",81,1,8,null,"Friday Market",29,7,"2023-05-19",0.875,51],[null,182,70822,"The LEGO Movie",null,"Unikitty's Sweetest Friends EVER!",76,1,6,null,"Friday Market",29,7,"2023-05-19",0.8333,48],[null,183,11006,"Classic","Creative Bricks","Big Spike’s Cloudtop Challenge",52,1,3,null,"Friday Market",29,7,"2023-05-19",0.6667,48],[null,184,11022,"Classic","Miscellaneous","Space Mission",1700,17.37,28.95,null,"Fantacy World",553.3,425.33,"2023-05-21",0.4,80],[null,185,42143,"technic","Licensed","Ferrari Daytona SP3",3778,127.2,159,null,"Fantacy World",553.3,425.33,"2023-05-21",0.2,75],[null,186,41701,"FRIENDS","Park","Street Food Market",592,12.57,17.95,null,"Fantacy World",553.3,425.33,"2023-05-21",0.2997,71],[null,187,60329,"CITY","Town","School Day",433,15.96,19.95,null,"Fantacy World",553.3,425.33,"2023-05-21",0.2,"?"],[null,188,76907,"Speed Champions","Lotus","Lotus Evija",247,6.36,7.95,null,"Fantacy World",553.3,425.33,"2023-05-21",0.2,73],[null,189,76949,"Jurassic World","Dominion","Giganotosaurus & Therizinosaurus Attack",810,37.56,46.95,null,"Fantacy World",553.3,425.33,"2023-05-21",0.2,74],[null,190,41707,"FRIENDS","Science","Tree-Planting Vehicle",336,6.97,9.95,null,"Fantacy World",553.3,425.33,"2023-05-21",0.2995,71],[null,191,60316,"CITY","Police","Police Station",668,12.95,20.95,null,"Fantacy World",553.3,425.33,"2023-05-21",0.3819,82],[null,192,76948,"Jurassic World","Dominion","T. rex & Atrociraptor Dinosaur Breakout",466,28.76,31.95,null,"Fantacy World",553.3,425.33,"2023-05-21",0.0998,74],[null,193,76947,"Jurassic World","Dominion","Quetzalcoatlus Plane Ambush",306,14.36,17.95,null,"Fantacy World",553.3,425.33,"2023-05-21",0.2,75],[null,194,76944,"Jurassic World","Dominion","T. rex Dinosaur Breakout",140,14.36,17.95,null,"Fantacy World",553.3,425.33,"2023-05-21",0.2,82],[null,195,76945,"Jurassic World","Dominion","Atrociraptor Dinosaur: Bike Chase",169,6,7.5,null,"Fantacy World",553.3,425.33,"2023-05-21",0.2,72],[null,196,31131,"Creator","3 in 1","Downtown Noodle Shop",569,11.17,15.95,null,"Fantacy World",553.3,425.33,"2023-05-21",0.2997,73],[null,197,60315,"CITY","Police","Police Mobile Command Truck",436,9.45,13.5,null,"Fantacy World",553.3,425.33,"2023-05-21",0.3,47],[null,198,60337,"CITY","Trains","Express Passenger Train",764,36.37,51.95,null,"Fantacy World",553.3,425.33,"2023-05-21",0.2999,13],[null,199,60336,"CITY","Trains","Freight Train",1153,50.36,62.95,null,"Fantacy World",553.3,425.33,"2023-05-21",0.2,13],[null,200,75327,"STAR WARS","Helmet Collection","Luke Skywalker (Red Five) Helmet",675,17.56,21.95,null,"Fantacy World",553.3,425.33,"2023-05-21",0.2,46],[null,201,60198,"CITY","Trains","Cargo Train",1226,55.96,69.95,null,"Fantacy World",133.8,115.76,"2023-05-23",0.2,79],[null,202,31139,"Creator","3 in 1","Cozy House",808,19.95,19.95,null,"Fantacy World",133.8,115.76,"2023-05-23",0,87],[null,203,60324,"CITY",null,"Mobile Crane",340,9.45,13.5,null,"Fantacy World",133.8,115.76,"2023-05-23",0.3,47],[null,204,60369,"CITY",null,"Mobile Police Dog Training",197,5.5,5.5,null,"Fantacy World",133.8,115.76,"2023-05-23",0,48],[null,205,60389,"CITY","Great Vehicles","Custom Car Garage",507,15.95,15.95,null,"Fantacy World",133.8,115.76,"2023-05-23",0,71],[null,206,41728,"FRIENDS","Heartlake City","Heartlake Downtown Diner",346,8.95,8.95,null,"Fantacy World",133.8,115.76,"2023-05-23",0,25],[null,207,42141,"technic","Licensed","McLaren Formula 1 Race Car",1432,58.455,64.95,null,"Fantacy World",85.9,73.12,"2023-05-24",0.1,59],[null,208,60320,"CITY","Fire","Fire Station",540,14.665,20.95,null,"Fantacy World",85.9,73.12,"2023-05-24",0.3,"17-20-48"],[null,209,42123,"technic","Licensed","McLaren Senna GTR",830,14.36,17.95,null,"Fantacy World",17.95,14.36,"2023-05-24",0.2,80],[null,210,76223,"Marvel Super Heroes","Avengers: Endgame","Nano Gauntlet",675,15,20.95,null,"Fantacy World",20.95,15,"2023-05-25",0.284,49],[null,211,76217,"Marvel Super Heroes","Guardians of the Galaxy Vol. 2","I am Groot",476,13,17.95,null,"LEGO Store",103.8,76,"2023-05-25",0.2758,49],[null,212,76942,"Jurassic World","Camp Cretaceous","Baryonyx Dinosaur Boat Escape",308,24,32,null,"LEGO Store",103.8,76,"2023-05-25",0.25,74],[null,213,76401,"Harry Potter","Prisoner of Azkaban","Hogwarts Courtyard: Sirius's Rescue",345,13,17.95,null,"LEGO Store",103.8,76,"2023-05-25",0.2758,"Fares"],[null,214,42137,"technic","Licensed","Formula E Porsche 99x Electric",422,13,17.95,null,"LEGO Store",103.8,76,"2023-05-25",0.2758,"*"],[null,215,42138,"technic","Licensed","Ford Mustang Shelby GT500",544,13,17.95,null,"LEGO Store",103.8,76,"2023-05-25",0.2758,80],[null,216,60238,"CITY","Trains","Switch Tracks",8,8.95,8.95,null,"LEGO Store",96.85,73.9,"2023-05-25",0,"box"],[null,217,60205,"CITY","Trains","Tracks",20,7.95,7.95,null,"LEGO Store",96.85,73.9,"2023-05-25",0,13],[null,218,43212,"Disney","Disney 100","Disney Celebration Train",200,16,16,null,"LEGO Store",96.85,73.9,"2023-05-25",0,76],[null,219,75969,"Harry Potter","Half-Blood Prince","Hogwarts Astronomy Tower",971,41,41,null,"LEGO Store",96.85,73.9,"2023-05-25",0,88],[null,220,76238,"DC Comics Super Heroes","Batman Classic TV Series","Classic TV Series Batman Cowl",372,0,22.95,null,"LEGO Store",96.85,73.9,"2023-05-25",1,46],[null,221,71043,"Harry Potter","General","Hogwarts Castle",6020,170,170,null,"LEGO Store",192.95,170,"2023-05-27",0,57],[null,222,76238,"DC Comics Super Heroes","Batman Classic TV Series","Classic TV Series Batman Cowl",372,0,22.95,null,"LEGO Store",192.95,170,"2023-05-27",1,46],[null,223,60375,"CITY","Police","Fire Station and Fire Engine",153,10.95,14.5,null,"Fantacy World",40.9,31.49,"2023-05-29",0.2448,82],[null,224,60370,"CITY","Police","Police Station Chase",172,10.95,13.7,null,"Fantacy World",40.9,31.49,"2023-05-29",0.2007,48],[null,225,41443,"FRIENDS","Traffic","Olivia's Electric Car",183,4.03,5.75,null,"Fantacy World",40.9,31.49,"2023-05-29",0.2991,25],[null,226,41712,"FRIENDS","Traffic","Recycling Truck",259,5.56,6.95,null,"Fantacy World",40.9,31.49,"2023-05-29",0.2,14],[null,227,42115,"technic","Licensed","Lamborghini Sián FKP 37",3696,119.2,149,null,"Fantacy World",149,119.2,"2023-05-29",0.2,78],[null,228,41380,"FRIENDS","Rescue Mission","Lighthouse Rescue Centre",602,15,18.5,null,"Friday Market",18.5,15,"2023-06-01",0.1892,66],[null,229,41950,"Dots","Lots of Dots","Lots of DOTS - Lettering",722,6,7.5,null,"Fantacy World",77.2,61.17,"2023-06-01",0.2,16],[null,230,41805,"Dots","Accessories","Creative Animal Drawer",643,7.95,7.95,null,"Fantacy World",77.2,61.17,"2023-06-01",0,16],[null,231,41935,"Dots","Lots of Dots","Lots of DOTS",1040,4.77,7.95,null,"Fantacy World",77.2,61.17,"2023-06-01",0.4,16],[null,232,41960,"Dots","Accessories","Big Box",479,7.16,8.95,null,"Fantacy World",77.2,61.17,"2023-06-01",0.2,16],[null,233,31131,"Creator","3 in 1","Downtown Noodle Shop",569,11.17,15.95,null,"Fantacy World",77.2,61.17,"2023-06-01",0.2997,19],[null,234,31131,"Creator","3 in 1","Downtown Noodle Shop",569,11.17,15.95,null,"Fantacy World",77.2,61.17,"2023-06-01",0.2997,73],[null,235,60388,"CITY","Great Vehicles","Gaming Tournament Truck",344,12.95,12.95,null,"Fantacy World",77.2,61.17,"2023-06-01",0,48],[null,236,76408,"Harry Potter","Order of the phoenix","12 Grimmauld Place",1083,46.95,46.95,null,"LEGO Store",69.9,46.95,"2023-06-06",0,18],[null,237,76238,"DC Comics Super Heroes","Batman Classic TV Series","Classic TV Series Batman Cowl",372,0,22.95,null,"LEGO Store",69.9,46.95,"2023-06-06",1,"Dae"],[null,238,10297,"ICONS","Modular Buildings Collection","Boutique Hotel",3066,89,89,null,"LEGO Store",97.5,89,"2023-06-06",0,20],[null,239,40591,"STAR WARS","Promotional","Death Star II",289,0,8.5,null,"LEGO Store",97.5,89,"2023-06-06",1,46],[null,240,75306,"STAR WARS","episode V","Imperial Probe Droid",683,14.95,24.95,null,"Fantacy World",195.2,149.35,"2023-06-08",0.4008,65],[null,241,42136,"technic","Licensed","JOHN DEERE 9620R 4WD TRACTOR",390,8.96,9.95,null,"Fantacy World",195.2,149.35,"2023-06-08",0.0995,73],[null,242,76400,"Harry Potter","Order of the phoenix","Hogwarts Carriage and Thestrals",121,5.25,7.5,null,"Fantacy World",195.2,149.35,"2023-06-08",0.3,88],[null,243,42147,"technic",null,"Dump Truck",177,3.25,3.25,null,"Fantacy World",195.2,149.35,"2023-06-08",0,76],[null,244,60312,"CITY","Police","POLICE CAR",94,2.63,3.75,null,"Fantacy World",195.2,149.35,"2023-06-08",0.2987,47],[null,245,41697,"FRIENDS","Beach","Turtle Protection Vehicle",90,2.63,3.75,null,"Fantacy World",195.2,149.35,"2023-06-08",0.2987,51],[null,246,60322,"CITY","Great Vehicles","Race Car",46,2.63,3.75,null,"Fantacy World",195.2,149.35,"2023-06-08",0.2987,48],[null,247,60325,"CITY","Great Vehicles","Cement Mixer Truck",85,4.5,7.5,null,"Fantacy World",195.2,149.35,"2023-06-08",0.4,47],[null,248,31127,"Creator","3 in 1","CREATOR STREET RACER",258,4.87,6.95,null,"Fantacy World",195.2,149.35,"2023-06-08",0.2993,50],[null,249,60383,"CITY","Great Vehicles","Electric Sports Car",95,2.95,2.95,null,"Fantacy World",195.2,149.35,"2023-06-08",0,47],[null,250,21056,"Architecture","Landmark Series","Taj Mahal",2022,29.37,41.95,null,"Fantacy World",195.2,149.35,"2023-06-08",0.2999,"Mama"],[null,251,21325,"ideas",null,"Medieval Blacksmith",2164,46.36,57.95,null,"Fantacy World",195.2,149.35,"2023-06-08",0.2,65],[null,252,31108,"Creator","3 in 1","Caravan Family Holiday",766,21,21,null,"Fantacy World",195.2,149.35,"2023-06-08",0,"*"],[null,253,40528,"Promotional",null,"Brand Retail Store",402,9,15,null,"Person",15,9,"2023-06-09",0.4,52],[null,254,10295,"ICONS","Vehicles","Porsche 911",1458,30,59,null,"Person",59,30,"2023-06-11",0.4915,2],[null,255,41716,"FRIENDS","Summer","Stephanie's Sailing Adventure",304,4.75,16.95,null,"Friday Market",74.45,25,"2023-06-15",0.7198,70],[null,256,11002,"Classic","Bricks","Basic Brick Set",300,1.5,4,null,"Friday Market",74.45,25,"2023-06-15",0.625,"Open-out"],[null,257,11001,"Classic","Bricks","Bricks and Ideas",123,1.75,5,null,"Friday Market",74.45,25,"2023-06-15",0.65,48],[null,258,11006,"Classic","Creative Bricks","Big Spike’s Cloudtop Challenge",52,1,3,null,"Friday Market",74.45,25,"2023-06-15",0.6667,48],[null,259,71768,"NINJAGO","Crystalized","Jay's Golden Dragon Motorbike",137,2,7,null,"Friday Market",74.45,25,"2023-06-15",0.7143,52],[null,260,71768,"NINJAGO","Crystalized","Jay's Golden Dragon Motorbike",137,2,7,null,"Friday Market",74.45,25,"2023-06-15",0.7143,52],[null,261,31100,"Creator","3 in 1","Sports Car",134,1.25,3,null,"Friday Market",74.45,25,"2023-06-15",0.5833,52],[null,262,31099,"Creator","3 in 1","Propeller Plane",128,1.25,3,null,"Friday Market",74.45,25,"2023-06-15",0.5833,"box"],[null,263,76830,"Disney","Lightyear","Zyclops Chase",87,2,7,null,"Friday Market",74.45,25,"2023-06-15",0.7143,67],[null,264,71385,"Super Mario","Power-Up Pack","Tanooki Mario Power-Up Pack",13,1.5,3.5,null,"Friday Market",74.45,25,"2023-06-15",0.5714,48],[null,265,60331,"CITY","Stuntz","Touring Stunt Bike",10,1,2.5,null,"Friday Market",74.45,25,"2023-06-15",0.6,48],[null,266,60296,"CITY","Stuntz","Wheelie Stunt Bike",14,1,2.5,null,"Friday Market",74.45,25,"2023-06-15",0.6,48],[null,267,60296,"CITY","Stuntz","Wheelie Stunt Bike",14,1,2.5,null,"Friday Market",74.45,25,"2023-06-15",0.6,48],[null,268,60296,"CITY","Stuntz","Wheelie Stunt Bike",14,1,2.5,null,"Friday Market",74.45,25,"2023-06-15",0.6,48],[null,269,43198,"Disney","Frozen II","Anna's Castle Courtyard",74,1.5,3.5,null,"Friday Market",74.45,25,"2023-06-15",0.5714,51],[null,270,41928,"Dots","Bag Tag","Bag Tag Narwhal",85,0.5,1.5,null,"Friday Market",74.45,25,"2023-06-15",0.6667,51],["Open",271,60124,"CITY","Volcano Explorers","Volcano Exploration Base",824,16.5,37,null,"Person",37,16.5,"2023-06-15",0.5541,71],[null,272,60262,"CITY","Airport","Passenger Airplane",669,30,40,null,"Person",40,30,"2023-06-16",0.25,71],[null,273,75336,"STAR WARS","Obi-Wan Kenobi","Inquisitor Transport Scythe",924,28.31,31.46,null,"Fantacy World",203.77,183.38,"2023-06-22",0.1001,50],[null,274,60380,"CITY","Town","Downtown",2010,58.45,64.95,null,"Fantacy World",203.77,183.38,"2023-06-22",0.1001,15],[null,275,75341,"STAR WARS","Ultimate Collector Series","Luke Skywalker's Landspeeder",1890,40.5,45,null,"Fantacy World",203.77,183.38,"2023-06-22",0.1,64],[null,276,10274,"ICONS","Vehicles","Ghostbusters ECTO-1",2352,56.12,62.36,null,"Fantacy World",203.77,183.38,"2023-06-22",0.1001,"Naji"],[null,277,60078,"CITY","Space","Utility Shuttle",155,3.5,8,null,"Person",102,44,"2023-07-03",0.5625,"box"],[null,278,60014,"CITY","Coast Guard","Coast Guard Patrol",449,13,30,null,"Person",102,44,"2023-07-03",0.5667,4],[null,279,60064,"CITY","Arctic","Arctic Supply Plane",374,17,40,null,"Person",102,44,"2023-07-03",0.575,4],[null,280,60183,"CITY","Traffic","Heavy Cargo Transport",310,3.5,8,null,"Person",102,44,"2023-07-03",0.5625,"box"],[null,281,60071,"CITY","Swamp Police","Hovercraft Arrest",331,7,16,null,"Person",102,44,"2023-07-03",0.5625,"box"],[null,282,41313,"FRIENDS","Summer","Heartlake Summer Pool",589,2.05,15,null,"Person",182.4,25,"2023-07-03",0.8633,25],[null,283,41700,"FRIENDS","Beach","Beach Glamping",380,1.95,13.95,null,"Person",182.4,25,"2023-07-03",0.8602,70],[null,284,41344,"FRIENDS","Heartlake City","Andrea's Accessories Store",294,1.35,10,null,"Person",182.4,25,"2023-07-03",0.865,25],[null,285,41391,"FRIENDS","Heartlake City","Heartlake City Hair Salon",235,0.95,7,null,"Person",182.4,25,"2023-07-03",0.8643,25],[null,286,41426,"FRIENDS","Heartlake City","Heartlake City Park Café",224,0.95,7,null,"Person",182.4,25,"2023-07-03",0.8643,25],[null,287,41395,"FRIENDS","Traffic","Friendship Bus",778,2.75,20,null,"Person",182.4,25,"2023-07-03",0.8625,82],[null,288,41449,"FRIENDS","Houses","Andrea's Family House",802,3.8,27.95,null,"Person",182.4,25,"2023-07-03",0.864,18],[null,289,41450,"FRIENDS","Heartlake City","Heartlake City Shopping Mall",1032,5.7,41.5,null,"Person",182.4,25,"2023-07-03",0.8627,25],[null,290,41684,"FRIENDS","Heartlake City","Heartlake City Grand Hotel",1308,5.5,40,null,"Person",182.4,25,"2023-07-03",0.8625,"18-78"],[null,291,71765,"NINJAGO","Core","Ninja Ultra Combo Mech",1104,11.23,31.95,null,"Friday Market",56.9,20,"2023-07-07",0.6485,21],[null,292,76230,"Marvel Super Heroes","Spider-Man","Venom Figure",297,3.5,9.95,null,"Friday Market",56.9,20,"2023-07-07",0.6482,4],[null,293,41366,"FRIENDS","Heartlake City","Olivia's Cupcake Café",335,5.27,15,null,"Friday Market",56.9,20,"2023-07-07",0.6487,67],[null,294,76415,"Harry Potter","Deathly Hallows","The Battle of Hogwarts",730,22.91,26.95,null,"Fantacy World",280.95,218.31,"2023-07-09",0.1499,88],[null,295,10316,"ICONS","Licensed","The Lord of the Rings: Rivendell",6167,152.95,199,null,"Fantacy World",280.95,218.31,"2023-07-09",0.2314,55],[null,296,60368,"CITY","Arctic","Arctic Explorer Ship",815,42.45,55,null,"Fantacy World",280.95,218.31,"2023-07-09",0.2282,78],[null,297,10255,"Creator","Modular Buildings Collection","Assembly Square",4002,84.96,99.95,null,"Fantacy World",99.95,84.96,"2023-07-09",0.15,"Mama"],[null,298,42162,"technic","Licensed","Bugatti Bolide Agile Blue",905,5,15.95,null,"Person",15.95,5,"2023-07-15",0.6865,14],[null,299,31120,"Creator","3 in 1","Medieval Castle",1426,31.3,34.6,null,"( Centerpoint )",34.6,31.3,"2023-07-15",0.0954,74],[null,300,31120,"Creator","3 in 1","Medieval Castle",1426,31.3,34.6,null,"( Centerpoint )",34.6,31.3,"2023-07-15",0.0954,1],[null,301,31120,"Creator","3 in 1","Medieval Castle",1426,31.3,34.6,null,"( Centerpoint )",34.6,31.3,"2023-07-15",0.0954,1],[null,302,41703,"FRIENDS","Tree Houses","Friendship Tree House",1114,19.02,29.76,null,"( Centerpoint )",29.76,19.02,"2023-07-15",0.3609,24],["ANOTHER",303,76906,"Speed Champions","Ferrari","1970 Ferrari 512 M",291,7.61,8.95,null,"Fantacy World",8.95,7.61,"2023-08-10",0.1497,"Abod"],["Open",304,10315,"ICONS","Miscellaneous","Tranquil Garden",1363,36.9,49,null,"LEGO Store Britsh",137.75,114.05,"2023-09-01",0.2469,"Awrad"],[null,305,31142,"Creator","3 in 1","Space Roller Coaster",874,36.9,37.95,null,"LEGO Store Britsh",137.75,114.05,"2023-09-01",0.0277,"Naji"],["Open",306,10497,"ICONS","Space System","Galaxy Explorer",1254,35,35.95,null,"LEGO Store Britsh",137.75,114.05,"2023-09-01",0.0264,14],[null,307,40569,"Creator","Postcard","London Postcard",277,5.25,5.5,null,"LEGO Store Britsh",137.75,114.05,"2023-09-01",0.0455,50],[null,308,30651,"Harry Potter","Miscellaneous","Quidditch Practice",55,0,1.6,null,"LEGO Store Britsh",137.75,114.05,"2023-09-01",1,88],[null,309,40598,"Harry Potter","Promotional","Gringotts Vault",212,0,7.75,null,"LEGO Store Britsh",137.75,114.05,"2023-09-01",1,88],[null,310,60304,"CITY","Road Plates","Road Plates",112,6.89,11.4,null,"LEGO Store Britsh",68.4,41.34,"2023-09-03",0.3956,16],[null,311,60304,"CITY","Road Plates","Road Plates",112,6.89,11.4,null,"LEGO Store Britsh",68.4,41.34,"2023-09-03",0.3956,16],[null,312,60304,"CITY","Road Plates","Road Plates",112,6.89,11.4,null,"LEGO Store Britsh",68.4,41.34,"2023-09-03",0.3956,16],[null,313,60304,"CITY","Road Plates","Road Plates",112,6.89,11.4,null,"LEGO Store Britsh",68.4,41.34,"2023-09-03",0.3956,16],[null,314,60304,"CITY","Road Plates","Road Plates",112,6.89,11.4,null,"LEGO Store Britsh",68.4,41.34,"2023-09-03",0.3956,16],[null,315,60304,"CITY","Road Plates","Road Plates",112,6.89,11.4,null,"LEGO Store Britsh",68.4,41.34,"2023-09-03",0.3956,16],[null,316,60304,"CITY","Road Plates","Road Plates",112,6.89,11.4,null,"LEGO Store Britsh",34.2,20.67,"2023-09-11",0.3956,16],[null,317,60304,"CITY","Road Plates","Road Plates",112,6.89,11.4,null,"LEGO Store Britsh",34.2,20.67,"2023-09-11",0.3956,16],[null,318,60304,"CITY","Road Plates","Road Plates",112,6.89,11.4,null,"LEGO Store Britsh",34.2,20.67,"2023-09-11",0.3956,16],[null,319,60304,"CITY","Road Plates","Road Plates",112,6.89,11.4,null,"The Entertainer",45.6,27.56,"2023-09-12",0.3956,16],[null,320,60304,"CITY","Road Plates","Road Plates",112,6.89,11.4,null,"The Entertainer",45.6,27.56,"2023-09-12",0.3956,16],[null,321,60304,"CITY","Road Plates","Road Plates",112,6.89,11.4,null,"The Entertainer",45.6,27.56,"2023-09-12",0.3956,16],[null,322,60304,"CITY","Road Plates","Road Plates",112,6.89,11.4,null,"The Entertainer",45.6,27.56,"2023-09-12",0.3956,16],[null,323,76386,"Harry Potter","Chamber of Secrets","Polyjuice Potion Mistake",217,6.89,7.95,null,"The Harry Potter Shop",25.9,24.11,"2023-09-13",0.1333,88],[null,324,76398,"Harry Potter","Chamber of Secrets","Hogwarts Chamber of Secrets",1176,17.22,17.95,null,"The Harry Potter Shop",25.9,24.11,"2023-09-13",0.0407,88],[null,325,76413,"Harry Potter","Death Hallows","Room of Requirement",587,17.5,19,null,"Virgin",19,17.5,"2023-09-14",0.0789,88],[null,326,11021,"Classic","90 Years of Play","90 Years of Play",1100,5.8,17.95,null,"Friday Market",213.15,70.25,"2023-09-27",0.6769,"Open-out"],[null,327,76399,"Harry Potter","Miscellaneous","Hogwarts Magical Trunk",603,7.25,22.7,null,"Friday Market",213.15,70.25,"2023-09-27",0.6806,26],[null,328,42127,"technic","Licensed","The Batman - Batmobile",1360,11.7,35,null,"Friday Market",213.15,70.25,"2023-09-27",0.6657,76],[null,329,21042,"ARCHITECTURE","Landmark Series","Statue of Liberty",1685,11.35,34,null,"Friday Market",213.15,70.25,"2023-09-27",0.6662,"Open-out"],[null,330,21057,"Architecture","Skylines","Singapore",827,10.5,32.5,null,"Friday Market",213.15,70.25,"2023-09-27",0.6769,"Dae"],[null,331,21057,"Architecture","Skylines","Singapore",827,10.5,32.5,null,"Friday Market",213.15,70.25,"2023-09-27",0.6769,"Open-out"],[null,332,71765,"NINJAGO","Core","Ninja Ultra Combo Mech",1104,10.3,31.95,null,"Friday Market",213.15,70.25,"2023-09-27",0.6776,21],[null,333,41385,"FRIENDS","Heart Box","Emma's Summer Heart Box",86,1,3,null,"Friday Market",213.15,70.25,"2023-09-27",0.6667,51],[null,334,41383,"FRIENDS","Pets","Olivia's Hamster Playground",81,2.5,8,null,"Friday Market",213.15,70.25,"2023-09-27",0.6875,"meme"],[null,335,71385,"Super Mario","Power-Up Pack","Tanooki Mario Power-Up Pack",13,1.2,3.5,null,"Friday Market",213.15,70.25,"2023-09-27",0.6571,"Fares"],[null,336,71384,"Super Mario","Power-Up Pack","Penguin Mario Power-Up Pack",18,1.2,3.5,null,"Friday Market",213.15,70.25,"2023-09-27",0.6571,48],[null,337,41928,"Dots","Bag Tag","Bag Tag Narwhal",85,0.5,1.5,null,"Friday Market",213.15,70.25,"2023-09-27",0.6667,51],[null,338,41921,"Dots","Extra Dots","Extra DOTS - Series 3",107,0.5,1.5,null,"Friday Market",213.15,70.25,"2023-09-27",0.6667,51],[null,339,43110,"The LEGO Movie","BeatBox","Folk Fairy BeatBox",89,2.3,6.8,null,"Friday Market",213.15,70.25,"2023-09-27",0.6618,87],[null,340,43103,"Vidiyo","BeatBox","Punk Pirate BeatBox",73,2.3,6.8,null,"Friday Market",213.15,70.25,"2023-09-27",0.6618,72],[null,341,43103,"Vidiyo","BeatBox","Punk Pirate BeatBox",73,2.3,6.8,null,"Friday Market",213.15,70.25,"2023-09-27",0.6618,72],[null,342,43105,"Vidiyo","BeatBox","Party Llama BeatBox",82,2.3,6.8,null,"Friday Market",213.15,70.25,"2023-09-27",0.6618,67],[null,343,43105,"Vidiyo","BeatBox","Party Llama BeatBox",82,2.3,6.8,null,"Friday Market",213.15,70.25,"2023-09-27",0.6618,67],[null,344,43105,"Vidiyo","BeatBox","Party Llama BeatBox",82,2.3,6.8,null,"Friday Market",213.15,70.25,"2023-09-27",0.6618,67],[null,345,43105,"Vidiyo","BeatBox","Party Llama BeatBox",82,2.3,6.8,null,"Friday Market",213.15,70.25,"2023-09-27",0.6618,67],[null,346,43102,"Vidiyo","BeatBox","Candy Mermaid BeatBox",71,2.3,6.8,null,"Friday Market",213.15,70.25,"2023-09-27",0.6618,87],[null,347,43107,"Vidiyo","BeatBox","HipHop Robot BeatBox",73,2.3,6.8,null,"Friday Market",213.15,70.25,"2023-09-27",0.6618,87],[null,348,21335,"ideas",null,"Motorized Lighthouse",2065,92.15,139,null,"LEGO Store",685,454.1,"2023-09-30",0.3371,20],[null,349,42146,"technic","Licensed","Liebherr Crawler Crane LR 13000",2883,185.25,279,null,"LEGO Store",685,454.1,"2023-09-30",0.336,63],[null,350,42154,"technic","Licensed","2022 Ford GT",1466,32.3,49,null,"LEGO Store",685,454.1,"2023-09-30",0.3408,76],[null,351,75355,"STAR WARS","Ultimate Collector Series","X-wing Starfighter",1949,78.85,119,null,"LEGO Store",685,454.1,"2023-09-30",0.3374,64],[null,352,21338,"ideas",null,"A-Frame Cabin",2082,52.25,79,null,"LEGO Store",685,454.1,"2023-09-30",0.3386,"Awrad"],[null,353,76249,"Marvel Super Heroes","Miscellaneous","Venomized Groot",630,13.3,20,null,"LEGO Store",685,454.1,"2023-09-30",0.335,49],[null,354,60343,"CITY","Great Vehicles","Rescue Helicopter Transporter",215,14.67,16.3,null,"Jarir Book",52.89,47.6,"2023-10-11",0.1,83],[null,355,60327,"CITY","Great Vehicles","Horse Transporter",196,14.67,16.3,null,"Jarir Book",52.89,47.6,"2023-10-11",0.1,87],[null,356,60373,"CITY","Fire","Fire Rescue Boat",144,7.19,7.99,null,"Jarir Book",52.89,47.6,"2023-10-11",0.1001,72],[null,357,41741,"FRIENDS","Dog Rescue","Dog Rescue Van",300,11.07,12.3,null,"Jarir Book",52.89,47.6,"2023-10-11",0.1,"box"],[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"#N/A"]],"bills":[["Date","time","Price","Items","shopping","Store","Bill NO"],["2023-02-24","20:45:00",13.1292,2,"Store","LEGO Store",1],["2023-02-24","20:46:00",414,2,"Store","LEGO Store",2],["2023-02-24","20:47:00",350.86,5,"Store","LEGO Store",3],["2023-03-17","19:22:00",151.99,7,"Store","Fantacy World",4],["2023-03-26","22:12:00",238.5,1,"Store","Fantacy World",5],["2023-03-29","13:35:00",152.1,9,"Online","Fantacy World",6],["2023-04-05","15:30:00",85.63,4,"Store","Fantacy World",7],["2023-04-10","15:42:00",335.34,7,"Store","Fantacy World",8],["2023-04-13","**",22.14,3,"Online","Jarir Book",9],["2023-04-13","**",43.2,3,"Online","Jarir Book",10],["2023-04-13","**",63.45,3,"Online","Jarir Book",11],["2023-04-14","**",66,4,"Online","BRICKS",12],["2023-04-18","21:37:00",63.45,3,"Store","Jarir Book",13],["2023-04-25","20:08:00",154,1,"Store","Fantacy World",14],["2023-04-28","**",32.85,1,"Online","Jarir Book",15],["2023-04-28","**",32.85,2,"Online","Jarir Book",16],["2023-05-22","**",468.43,33,"Online","Fantacy World",17],["2023-05-23","14:27:00",115.76,6,"Store","Fantacy World",18],["2023-05-24","19:06:00",73.12,2,"Store","Fantacy World",19],["2023-05-24","19:44:00",56.27,5,"Store","Jarir Book",20],["2023-05-24","19:45:00",30.96,3,"Store","Jarir Book",21],["2023-05-24","20:20:00",14.36,1,"Store","Fantacy World",22],["2023-05-25","15:59:00",73.91,5,"Store","LEGO Store",23],["2023-05-25","16:02:00",91,6,"Store","LEGO Store",24],["2023-05-27","17:32:00",170.01,2,"Store","LEGO Store",25],["2023-05-29","18:57:00",30.44,8,"Online","Fantacy World",26],["2023-05-30","**",22.46,5,"Online","Fantacy World",27],["2023-05-31","16:11:00",74.92,3,"Store","Jarir Book",28],["2023-05-31","16:19:00",31.49,4,"Store","Fantacy World",29],["2023-05-31","16:50:00",119.2,1,"Store","Fantacy World",30],["2023-06-01","13:38:00",61.16,7,"Store","Fantacy World",31],["2023-06-06","17:55:00",46.96,2,"Store","LEGO Store",32],["2023-06-06","17:58:00",89.01,2,"Store","LEGO Store",33],["2023-06-07","16:12:00",162.3,14,"Online","Fantacy World",34],["2023-06-22","17:39:00",240.54,27,"Online","Fantacy World",35],["2023-07-09","11:53:00",225.84,6,"Online","Fantacy World",36],["2023-07-09","13:57:00",84.957,1,"Store","Fantacy World",37],["2023-09-13","19:10:00",24.11,2,"Store","The Harry Potter Shop",38],["2023-09-14","22:22:00",17.5,1,"Store","Virgin",39],["2023-09-30","16:11:00",454.1,6,"Online","LEGO Store",40],["2023-10-25","15:19:00",335.62,10,"Online","Fantacy World",41],["2024-01-27","11:48:00",26.9,7,"Online","Fantacy World",42],["2024-01-27","**",27.65,9,"Online","( Centerpoint )",43],["2024-01-28","16:30:00",21.69,3,"Online","City Center",44],["2024-05-26","11:14:00",15.85,5,"Store","Fantacy World",45],["2024-07-10","19:32:00",16.15,2,"Store","Fantacy World",46],["2024-07-25","12:31:00",169.38,2,"Online","Fantacy World",47],["2024-08-09","**",38.5,3,"Online","LEGO Store",48],["2024-08-09","**",198,3,"Online","LEGO Store",49],["2024-08-09","**",233.95,3,"Online","LEGO Store",50],["3023-03-30","21:26:00",37.52,9,"Store","LEGO Store",51]]}`);
+
+const COLS = ['Open','N2','item #','theme','subTheme','item Name','PCS','Price BUY','Price','Link','STORE','The Price','Total Bill','Order Date','%','Box'];
+const COL = Object.fromEntries(COLS.map((c,i)=>[c,i]));
+
+// Duplicate item numbers
+const _itemCounts = {};
+_D.everything.forEach(r => { const v = r[COL['item #']]; if(v) _itemCounts[v] = (_itemCounts[v]||0)+1; });
+const DUPES = new Set(Object.keys(_itemCounts).filter(k=>_itemCounts[k]>1).map(Number));
+
+// Store colors
+const STORE_COLORS = {
+  'LEGO Store':         {bg:'#006DB7', color:'#fff'},
+  'Fantacy World':      {bg:'#FF6B35', color:'#fff'},
+  'Jarir Book':         {bg:'#2E7D32', color:'#fff'},
+  'BRICKS':             {bg:'#C4151C', color:'#fff'},
+  'Friday Market':      {bg:'#7B3F00', color:'#fff'},
+  'Person':             {bg:'#6A1B9A', color:'#fff'},
+  '( Centerpoint )':    {bg:'#00838F', color:'#fff'},
+  'LEGO Store Britsh':  {bg:'#1565C0', color:'#fff'},
+  'The Entertainer':    {bg:'#E65100', color:'#fff'},
+  'The Harry Potter Shop':{bg:'#4A148C', color:'#FFD700'},
+  'Virgin':             {bg:'#880E4F', color:'#fff'},
+  'City Center':        {bg:'#0D47A1', color:'#fff'},
+};
+
+// Theme colors
+const THEME_COLORS = {
+  'STAR WARS':          {bg:'#1A1A2E', color:'#FFE81F'},
+  'Harry Potter':       {bg:'#4A148C', color:'#FFD700'},
+  'Speed Champions':    {bg:'#FF6B35', color:'#fff'},
+  'CITY':               {bg:'#006DB7', color:'#fff'},
+  'Marvel Super Heroes':{bg:'#C4151C', color:'#fff'},
+  'DC Comics Super Heroes':{bg:'#003087', color:'#FFD700'},
+  'NINJAGO':            {bg:'#C4151C', color:'#fff'},
+  'Jurassic World':     {bg:'#2E7D32', color:'#AEEA00'},
+  'ICONS':              {bg:'#333', color:'#FFD700'},
+  'Creator Expert':     {bg:'#FF6B35', color:'#fff'},
+  'Ideas':              {bg:'#00838F', color:'#fff'},
+  'TECHNIC':            {bg:'#1A1A1A', color:'#FF6B35'},
+  'Technic':            {bg:'#1A1A1A', color:'#FF6B35'},
+  'technic':            {bg:'#1A1A1A', color:'#FF6B35'},
+  'FRIENDS':            {bg:'#FF80AB', color:'#880E4F'},
+  'Super Mario':        {bg:'#C4151C', color:'#FFFDE7'},
+  'Disney':             {bg:'#1565C0', color:'#FFD700'},
+  'The Lord of the Rings':{bg:'#4E342E', color:'#FFD700'},
+  'The Hobbit':         {bg:'#4E342E', color:'#A5D6A7'},
+  'ARCHITECTURE':       {bg:'#424242', color:'#fff'},
+  'Architecture':       {bg:'#424242', color:'#fff'},
+  'Minecraft':          {bg:'#33691E', color:'#DCEDC8'},
+  'Bionicle':           {bg:'#B71C1C', color:'#fff'},
+  'Classic':            {bg:'#006DB7', color:'#fff'},
+  'CREATOR':            {bg:'#F47B20', color:'#fff'},
+  'Creator':            {bg:'#F47B20', color:'#fff'},
+  'Advanced models':    {bg:'#37474F', color:'#fff'},
+  'Vidiyo':             {bg:'#AA00FF', color:'#fff'},
+  'Dots':               {bg:'#FF4081', color:'#fff'},
+  'Elves':              {bg:'#00BCD4', color:'#fff'},
+  'Nexo Knights':       {bg:'#0D47A1', color:'#AEEA00'},
+  'Pirates':            {bg:'#4E342E', color:'#fff'},
+  'Scooby-Doo':         {bg:'#6A1B9A', color:'#FFD700'},
+  'The LEGO Movie':     {bg:'#F57F17', color:'#fff'},
+  'The Simpsons':       {bg:'#FFD700', color:'#C4151C'},
+  'CITY ':              {bg:'#006DB7', color:'#fff'},
+  'Promotional':        {bg:'#607D8B', color:'#fff'},
+  'DC Comics':          {bg:'#003087', color:'#FFD700'},
+  'ideas':              {bg:'#00838F', color:'#fff'},
+  'creator expert':     {bg:'#FF6B35', color:'#fff'},
+};
+
+// ── STATE ─────────────────────────────────────────────────
+let S = {
+  tab: 'everything',
+  rows: _D.everything.map((r,i)=>({...Object.fromEntries(COLS.map((c,j)=>[c,r[j]])), _id:i})),
+  bills: _D.bills,
+  search: '', filterTheme: '', filterStore: '', filterOpen: '',
+  page: 1, pageSize: 40,
+  editId: null
+};
+
+// ── HELPERS ───────────────────────────────────────────────
+function fmtNum(v) {
+  if (v===null||v===undefined||v==='') return '—';
+  const n = parseFloat(v);
+  if (isNaN(n)) return v;
+  return n%1===0 ? n.toLocaleString() : n.toFixed(2);
+}
+function fmtDate(v) {
+  if (!v) return '—';
+  const s = String(v);
+  if (s.match(/^\d{4}-\d{2}-\d{2}/)) return s.substring(0,10);
+  return s;
+}
+function legoUrl(itemNum) {
+  return `https://www.lego.com/en-us/product/${itemNum}`;
+}
+function imgUrl(itemNum) {
+  return `https://www.lego.com/cdn/cs/set/assets/blt${itemNum}/product-image.jpg`;
+}
+function bricksetImg(itemNum) {
+  return `https://images.brickset.com/sets/images/${itemNum}-1.jpg`;
+}
+function toast(msg, err=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (err?' err':'');
+  setTimeout(()=>t.className='toast', 2200);
+}
+
+function storeChip(v) {
+  if (!v) return '';
+  const c = STORE_COLORS[v] || {bg:'#888', color:'#fff'};
+  return `<span class="store-chip" style="background:${c.bg};color:${c.color}">${v}</span>`;
+}
+function themeChip(v) {
+  if (!v) return '';
+  const c = THEME_COLORS[v] || {bg:'#607D8B', color:'#fff'};
+  return `<span class="theme-chip" style="background:${c.bg};color:${c.color}">${v}</span>`;
+}
+function openBadge(v, n2) {
+  if (n2 >= 2 && n2 <= 97) return `<span class="badge badge-glued">✳️ Glued</span>`;
+  if (v === 'Open') return `<span class="badge badge-open">🔓 Open</span>`;
+  return `<span class="badge badge-sealed">🔒 Sealed</span>`;
+}
+
+// ── TABS ──────────────────────────────────────────────────
+function switchTab(tab) {
+  S.tab = tab; S.page = 1; S.search = ''; S.filterTheme = ''; S.filterStore = ''; S.filterOpen = '';
+  ['everything','bills','dashboard'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+  });
+  render();
+}
+
+// ── RENDER ────────────────────────────────────────────────
+function render() {
+  if (S.tab === 'everything') renderEverything();
+  else if (S.tab === 'bills') renderBills();
+  else renderDashboard();
+}
+
+function renderEverything() {
+  let rows = S.rows;
+  if (S.search) {
+    const q = S.search.toLowerCase();
+    rows = rows.filter(r => COLS.some(c => String(r[c]||'').toLowerCase().includes(q)));
+  }
+  if (S.filterTheme) rows = rows.filter(r => r['theme'] === S.filterTheme);
+  if (S.filterStore) rows = rows.filter(r => r['STORE'] === S.filterStore);
+  if (S.filterOpen === 'open') rows = rows.filter(r => r['Open']==='Open');
+  else if (S.filterOpen === 'sealed') rows = rows.filter(r => !r['Open'] && (r['N2']>97));
+  else if (S.filterOpen === 'glued') rows = rows.filter(r => r['N2']>=2 && r['N2']<=97);
+
+  const total = rows.length;
+  const pages = Math.ceil(total/S.pageSize)||1;
+  if (S.page>pages) S.page=1;
+  const start = (S.page-1)*S.pageSize;
+  const paged = rows.slice(start, start+S.pageSize);
+
+  // Unique filters
+  const themes = [...new Set(S.rows.map(r=>r['theme']).filter(Boolean))].sort();
+  const stores = [...new Set(S.rows.map(r=>r['STORE']).filter(Boolean))].sort();
+
+  // Stats
+  const totalSpend = S.rows.reduce((a,r)=>a+(parseFloat(r['Total Bill'])||0),0);
+  document.getElementById('hdr-count').textContent = S.rows.length + ' sets';
+  document.getElementById('hdr-spend').textContent = totalSpend.toFixed(1) + ' KWD';
+
+  document.getElementById('mainContent').innerHTML = `
+    <div class="toolbar">
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" placeholder="بحث في الكولكشن..." value="${S.search}" oninput="S.search=this.value;S.page=1;render()">
+      </div>
+      <button class="btn btn-red" onclick="openAdd()">＋ Add</button>
+      <button class="btn btn-green btn-sm" onclick="exportXLSX()">⬇ Export</button>
+    </div>
+    <div class="filters">
+      <select class="filter-sel" onchange="S.filterTheme=this.value;S.page=1;render()">
+        <option value="">🎨 All Themes</option>
+        ${themes.map(t=>`<option value="${t}" ${S.filterTheme===t?'selected':''}>${t}</option>`).join('')}
+      </select>
+      <select class="filter-sel" onchange="S.filterStore=this.value;S.page=1;render()">
+        <option value="">🏪 All Stores</option>
+        ${stores.map(s=>`<option value="${s}" ${S.filterStore===s?'selected':''}>${s}</option>`).join('')}
+      </select>
+      <select class="filter-sel" style="max-width:140px" onchange="S.filterOpen=this.value;S.page=1;render()">
+        <option value="">📦 All Status</option>
+        <option value="open" ${S.filterOpen==='open'?'selected':''}>🔓 Open</option>
+        <option value="sealed" ${S.filterOpen==='sealed'?'selected':''}>🔒 Sealed</option>
+        <option value="glued" ${S.filterOpen==='glued'?'selected':''}>✳️ Glued</option>
+      </select>
+      ${S.search||S.filterTheme||S.filterStore||S.filterOpen?`<button class="btn btn-sm" style="background:#eee;color:#333" onclick="S.search='';S.filterTheme='';S.filterStore='';S.filterOpen='';render()">✕ Clear</button>`:''}
+    </div>
+    <div class="stats-row">
+      <div class="mini-stat"><div class="sv">${total.toLocaleString()}</div><div class="sl">Results</div></div>
+      <div class="mini-stat"><div class="sv">${S.rows.filter(r=>r['Open']==='Open').length}</div><div class="sl">Open</div></div>
+      <div class="mini-stat"><div class="sv">${DUPES.size}</div><div class="sl">Duplicates</div></div>
+      <div class="mini-stat"><div class="sv">${S.rows.filter(r=>r['N2']>=2&&r['N2']<=97).length}</div><div class="sl">Glued ✳️</div></div>
+    </div>
+    <div class="table-outer">
+      <table>
+        <thead><tr>
+          <th>#</th><th>Status</th><th>Item #</th><th>Theme</th><th>Item Name</th>
+          <th>PCS</th><th>Price Buy</th><th>Price</th><th>Store</th><th>Bill</th><th>Date</th><th>Box</th>
+        </tr></thead>
+        <tbody>
+          ${paged.length===0 ? `<tr><td colspan="12" style="text-align:center;padding:30px;color:#999">No results</td></tr>` :
+            paged.map(r => {
+              const isDup = DUPES.has(r['item #']);
+              const dupStyle = isDup ? 'background:#FFE0E0!important' : '';
+              const itemNumStyle = isDup ? 'color:#8B0000;font-weight:900;background:#FFE0E0;padding:2px 6px;border-radius:4px' : 'font-weight:700';
+              return `<tr style="${dupStyle}" onclick="openDetail(${r._id})">
+                <td class="td-num">${r['N2']||''}</td>
+                <td>${openBadge(r['Open'], r['N2'])}</td>
+                <td><span style="${itemNumStyle}">${r['item #']||''}</span></td>
+                <td>${themeChip(r['theme'])}</td>
+                <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;font-weight:600">${r['item Name']||''}</td>
+                <td style="text-align:center">${r['PCS']||'—'}</td>
+                <td style="text-align:right;color:#006B35;font-weight:700">${fmtNum(r['Price BUY'])}</td>
+                <td style="text-align:right;color:#555">${fmtNum(r['Price'])}</td>
+                <td>${storeChip(r['STORE'])}</td>
+                <td style="text-align:right;font-weight:700;color:#C4151C">${fmtNum(r['Total Bill'])}</td>
+                <td style="color:#666">${fmtDate(r['Order Date'])}</td>
+                <td style="color:#888;font-size:11px">${r['Box']||'—'}</td>
+              </tr>`;
+            }).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <span style="color:#888;font-size:12px">${start+1}–${Math.min(start+S.pageSize,total)} من ${total}</span>
+      <div class="page-btns">
+        <button class="pg-btn" onclick="S.page--;render()" ${S.page<=1?'disabled':''}>‹</button>
+        ${Array.from({length:Math.min(pages,7)},(_,i)=>{
+          let pg = pages<=7?i+1:S.page<=4?i+1:S.page>=pages-3?pages-6+i:S.page-3+i;
+          return `<button class="pg-btn ${pg===S.page?'active':''}" onclick="S.page=${pg};render()">${pg}</button>`;
+        }).join('')}
+        <button class="pg-btn" onclick="S.page++;render()" ${S.page>=pages?'disabled':''}>›</button>
+      </div>
+      <select class="filter-sel" style="max-width:80px;padding:5px 6px" onchange="S.pageSize=+this.value;S.page=1;render()">
+        ${[20,40,80,100].map(n=>`<option ${S.pageSize===n?'selected':''} value="${n}">${n}</option>`).join('')}
+      </select>
+    </div>
+  `;
+}
+
+// ── DETAIL MODAL ──────────────────────────────────────────
+function openDetail(id) {
+  const r = S.rows.find(x=>x._id===id);
+  if (!r) return;
+
+  document.getElementById('detailTitle').textContent = r['item Name'] || '';
+  document.getElementById('detailNum').textContent = `Item # ${r['item #']} · N2: ${r['N2']}`;
+
+  // Try to load image from brickset
+  const imgWrap = document.getElementById('detailImgWrap');
+  const itemNum = r['item #'];
+  const imgSrc = bricksetImg(itemNum);
+  imgWrap.innerHTML = `
+    <img class="modal-img" src="${imgSrc}"
+      onerror="this.style.display='none';document.getElementById('imgFallback').style.display='block'"
+      alt="${r['item Name']}">
+    <div id="imgFallback" style="display:none;text-align:center">
+      <div style="font-size:50px">🧱</div>
+      <div style="font-size:12px;color:#999;margin-top:6px">${r['item Name']}</div>
+    </div>`;
+
+  const lego = legoUrl(itemNum);
+  const isDup = DUPES.has(r['item #']);
+
+  document.getElementById('detailBody').innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-item">
+        <div class="detail-label">Status</div>
+        <div class="detail-value">${openBadge(r['Open'], r['N2'])}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Theme</div>
+        <div class="detail-value">${themeChip(r['theme'])}</div>
+      </div>
+      <div class="detail-item full">
+        <div class="detail-label">Sub Theme</div>
+        <div class="detail-value">${r['subTheme']||'—'}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Pieces</div>
+        <div class="detail-value" style="color:var(--lego-blue);font-size:20px">${r['PCS']||'—'}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Box</div>
+        <div class="detail-value">${r['Box']||'—'}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Price Buy</div>
+        <div class="detail-value" style="color:var(--lego-green)">${fmtNum(r['Price BUY'])} KWD</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Original Price</div>
+        <div class="detail-value">${fmtNum(r['Price'])} KWD</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">The Price</div>
+        <div class="detail-value">${fmtNum(r['The Price'])} KWD</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Total Bill</div>
+        <div class="detail-value" style="color:var(--lego-red)">${fmtNum(r['Total Bill'])} KWD</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Discount</div>
+        <div class="detail-value">${r['%']!==null&&r['%']!==undefined ? (parseFloat(r['%'])*100).toFixed(0)+'%' : '—'}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Order Date</div>
+        <div class="detail-value">${fmtDate(r['Order Date'])}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Store</div>
+        <div class="detail-value">${storeChip(r['STORE'])}</div>
+      </div>
+      ${isDup?`<div class="detail-item full" style="background:#FFE0E0;border:1px solid #FFAAAA"><div class="detail-label">⚠️ Note</div><div class="detail-value" style="color:#8B0000">Duplicate Item Number</div></div>`:''}
+      <div class="detail-item full">
+        <div class="detail-label">🌐 LEGO Page</div>
+        <div class="detail-value"><a href="${lego}" target="_blank">lego.com/product/${itemNum} ↗</a></div>
+      </div>
+    </div>`;
+
+  document.getElementById('detailActions').innerHTML = `
+    <button class="btn btn-blue" style="flex:1" onclick="window.open('${lego}','_blank')">🌐 Open LEGO Page</button>
+    <button class="btn btn-yellow" onclick="closeDetail();openEdit(${id})">✏️ Edit</button>`;
+
+  document.getElementById('detailModal').classList.add('open');
+}
+
+function closeDetail() { document.getElementById('detailModal').classList.remove('open'); }
+
+// ── ADD / EDIT FORM ───────────────────────────────────────
+const STORES_LIST = ['LEGO Store','Fantacy World','Jarir Book','BRICKS','Friday Market','Person','( Centerpoint )','LEGO Store Britsh','The Entertainer','The Harry Potter Shop','Virgin','City Center'];
+const THEMES_LIST = ['Advanced models','ARCHITECTURE','Architecture','Bionicle','CITY','Classic','CREATOR','Creator','Creator Expert','DC Comics Super Heroes','Disney','Dots','Elves','FRIENDS','Harry Potter','ICONS','Ideas','Jurassic World','Marvel Super Heroes','Minecraft','NINJAGO','Nexo Knights','Pirates','Promotional','STAR WARS','Scooby-Doo','Speed Champions','Super Mario','TECHNIC','The Hobbit','The LEGO Movie','The Lord of the Rings','The Simpsons','Vidiyo'];
+
+function openAdd() {
+  S.editId = null;
+  document.getElementById('formTitle').innerHTML = '➕ Add New Set <button class="form-close" onclick="closeForm()">✕</button>';
+  renderForm({});
+  document.getElementById('formModal').classList.add('open');
+}
+function openEdit(id) {
+  S.editId = id;
+  const r = S.rows.find(x=>x._id===id);
+  document.getElementById('formTitle').innerHTML = '✏️ Edit Set <button class="form-close" onclick="closeForm()">✕</button>';
+  renderForm(r);
+  document.getElementById('formModal').classList.add('open');
+}
+function closeForm() { document.getElementById('formModal').classList.remove('open'); }
+
+function renderForm(r) {
+  const v = c => r[c]!==null&&r[c]!==undefined?r[c]:'';
+  document.getElementById('formBody').innerHTML = `
+    <div class="form-grid">
+      <div class="fg"><label>N2 (Serial)</label><input type="number" id="f_N2" value="${v('N2')}"></div>
+      <div class="fg"><label>Item #</label><input type="number" id="f_item" value="${v('item #')}"></div>
+      <div class="fg"><label>Theme</label>
+        <select id="f_theme"><option value="${v('theme')}">${v('theme')||'Select...'}</option>
+          ${THEMES_LIST.filter(t=>t!==v('theme')).map(t=>`<option value="${t}">${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fg"><label>Sub Theme</label><input type="text" id="f_sub" value="${v('subTheme')}"></div>
+      <div class="fg full"><label>Item Name</label><input type="text" id="f_name" value="${v('item Name')}"></div>
+      <div class="fg"><label>PCS</label><input type="number" id="f_pcs" value="${v('PCS')}"></div>
+      <div class="fg"><label>Price Buy (KWD)</label><input type="number" step="0.001" id="f_pricebuy" value="${v('Price BUY')}"></div>
+      <div class="fg"><label>Price (KWD)</label><input type="number" step="0.001" id="f_price" value="${v('Price')}"></div>
+      <div class="fg"><label>Store</label>
+        <select id="f_store"><option value="${v('STORE')}">${v('STORE')||'Select...'}</option>
+          ${STORES_LIST.filter(s=>s!==v('STORE')).map(s=>`<option value="${s}">${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fg"><label>The Price</label><input type="number" step="0.001" id="f_theprice" value="${v('The Price')}"></div>
+      <div class="fg"><label>Total Bill</label><input type="number" step="0.001" id="f_totalbill" value="${v('Total Bill')}"></div>
+      <div class="fg"><label>Order Date</label><input type="date" id="f_date" value="${v('Order Date')?.toString().substring(0,10)||''}"></div>
+      <div class="fg"><label>Discount %</label><input type="number" step="0.01" id="f_pct" value="${v('%')}"></div>
+      <div class="fg"><label>Box</label><input type="text" id="f_box" value="${v('Box')}"></div>
+      <div class="fg"><label>Status (Open field)</label>
+        <select id="f_open">
+          <option value="" ${!v('Open')?'selected':''}>— Sealed / Empty</option>
+          <option value="Open" ${v('Open')==='Open'?'selected':''}>Open</option>
+          <option value="✳️" ${v('Open')==='✳️'?'selected':''}>✳️ Glued</option>
+        </select>
+      </div>
+      <div class="fg"><label>Link</label><input type="text" id="f_link" value="${v('Link')}"></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-sm" style="background:#eee;color:#333" onclick="closeForm()">Cancel</button>
+      <button class="btn btn-red" onclick="saveForm()">💾 Save</button>
+    </div>`;
+}
+
+function saveForm() {
+  const get = id => { const el=document.getElementById(id); return el?el.value:null; };
+  const num = id => { const v=get(id); return v===''?null:parseFloat(v); };
+  
+  const rec = {
+    'Open': get('f_open')||null,
+    'N2': num('f_N2'),
+    'item #': num('f_item'),
+    'theme': get('f_theme'),
+    'subTheme': get('f_sub'),
+    'item Name': get('f_name'),
+    'PCS': num('f_pcs'),
+    'Price BUY': num('f_pricebuy'),
+    'Price': num('f_price'),
+    'Link': get('f_link'),
+    'STORE': get('f_store'),
+    'The Price': num('f_theprice'),
+    'Total Bill': num('f_totalbill'),
+    'Order Date': get('f_date'),
+    '%': num('f_pct'),
+    'Box': get('f_box'),
   };
 
-  function setPage(id){
-    id = id || 'home';
-    window.currentPage = id;
-
-    document.querySelectorAll('main > section.page, .page').forEach(function(sec){
-      const active = sec.id === id;
-      sec.classList.toggle('active', active);
-      sec.hidden = !active;
-      sec.style.display = active ? 'block' : 'none';
-      sec.style.visibility = active ? 'visible' : 'hidden';
-      sec.style.height = active ? 'auto' : '0';
-      sec.style.overflow = active ? 'visible' : 'hidden';
-    });
-
-    document.querySelectorAll('#pagesMenu [data-page]').forEach(function(btn){
-      btn.classList.toggle('active', btn.getAttribute('data-page') === id);
-    });
-
-    const title = document.getElementById('pageTitle');
-    if(title) title.textContent = titles[id] || id;
-
-    const menu = document.getElementById('pagesMenu');
-    if(menu) menu.classList.remove('open');
+  if (S.editId !== null) {
+    const idx = S.rows.findIndex(r=>r._id===S.editId);
+    if (idx!==-1) { rec._id = S.editId; S.rows[idx] = rec; toast('✅ Updated!'); }
+  } else {
+    rec._id = S.rows.reduce((m,r)=>Math.max(m,r._id||0),0)+1;
+    S.rows.push(rec);
+    toast('✅ Added!');
   }
+  closeForm();
+  render();
+}
 
-  function toggleMenu(e){
-    if(e){ e.preventDefault(); e.stopPropagation(); }
-    const menu = document.getElementById('pagesMenu');
-    if(menu) menu.classList.toggle('open');
-    return false;
-  }
+// ── BILLS ─────────────────────────────────────────────────
+function renderBills() {
+  document.getElementById('hdr-count').textContent = S.rows.length + ' sets';
+  const totalSpend = S.rows.reduce((a,r)=>a+(parseFloat(r['Total Bill'])||0),0);
+  document.getElementById('hdr-spend').textContent = totalSpend.toFixed(1) + ' KWD';
 
-  function bind(){
-    const ball = document.getElementById('ballBtn');
-    const menu = document.getElementById('pagesMenu');
+  const bills = S.bills.slice(1); // skip header
+  const totalBillAmt = bills.reduce((a,r)=>a+(parseFloat(r[2])||0),0);
+  const totalItems = bills.reduce((a,r)=>a+(parseInt(r[3])||0),0);
 
-    if(ball){
-      ball.onclick = toggleMenu;
-      ball.addEventListener('touchend', toggleMenu, {passive:false});
-    }
+  const stores = {};
+  bills.forEach(r => { const s=r[5]; if(s) stores[s]=(stores[s]||0)+(parseFloat(r[2])||0); });
 
-    if(menu){
-      menu.querySelectorAll('[data-page]').forEach(function(btn){
-        btn.onclick = function(e){
-          e.preventDefault();
-          e.stopPropagation();
-          setPage(btn.getAttribute('data-page'));
-          return false;
-        };
-      });
-    }
+  document.getElementById('mainContent').innerHTML = `
+    <div class="bills-summary">
+      <div class="bill-card"><div class="bv">${bills.length}</div><div class="bl">Bills</div></div>
+      <div class="bill-card"><div class="bv">${totalItems}</div><div class="bl">Items</div></div>
+      <div class="bill-card"><div class="bv">${totalBillAmt.toFixed(1)}</div><div class="bl">KWD Total</div></div>
+    </div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:13px;font-weight:800;color:var(--lego-blue);margin-bottom:8px">🏪 By Store</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${Object.entries(stores).sort((a,b)=>b[1]-a[1]).map(([s,amt])=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;background:var(--panel);border-radius:8px;padding:8px 12px;border:1.5px solid var(--border)">
+            <span>${storeChip(s)}</span>
+            <span style="font-weight:800;color:var(--lego-red)">${amt.toFixed(2)} KWD</span>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="table-outer">
+      <table>
+        <thead><tr>
+          <th>Date</th><th>Time</th><th>Total Price</th><th>Items</th><th>Type</th><th>Store</th><th>Bill #</th>
+        </tr></thead>
+        <tbody>
+          ${bills.map(r=>`<tr>
+            <td>${fmtDate(r[0])}</td>
+            <td>${r[1]||'—'}</td>
+            <td style="font-weight:800;color:var(--lego-red)">${fmtNum(r[2])} KWD</td>
+            <td style="text-align:center;font-weight:700">${r[3]||'—'}</td>
+            <td><span style="background:#E8F0FB;color:#006DB7;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700">${r[4]||'—'}</span></td>
+            <td>${storeChip(r[5])}</td>
+            <td style="color:#888;font-size:11px">${r[6]||'—'}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
 
-    // Override app navigation too
-    window.goPage = function(id){
-      setPage(id);
-      try{ if(typeof renderAll === 'function') renderAll(); }catch(e){}
-      setTimeout(function(){ setPage(id); }, 0);
-      return false;
-    };
+// ── DASHBOARD ─────────────────────────────────────────────
+function renderDashboard() {
+  document.getElementById('hdr-count').textContent = S.rows.length + ' sets';
+  const totalSpend = S.rows.reduce((a,r)=>a+(parseFloat(r['Total Bill'])||0),0);
+  document.getElementById('hdr-spend').textContent = totalSpend.toFixed(1) + ' KWD';
 
-    setTimeout(function(){ setPage(window.currentPage || 'home'); }, 50);
-    setTimeout(function(){ setPage(window.currentPage || 'home'); }, 300);
-  }
+  const themeCounts = {};
+  S.rows.forEach(r=>{const t=r['theme'];if(t)themeCounts[t]=(themeCounts[t]||0)+1;});
+  const sorted = Object.entries(themeCounts).sort((a,b)=>b[1]-a[1]);
+  const maxC = sorted[0]?.[1]||1;
 
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', bind);
-  }else{
-    bind();
-  }
-})();
+  const storeCounts = {};
+  S.rows.forEach(r=>{const s=r['STORE'];if(s)storeCounts[s]=(storeCounts[s]||0)+1;});
+  const sortedS = Object.entries(storeCounts).sort((a,b)=>b[1]-a[1]);
+
+  const openCount = S.rows.filter(r=>r['Open']==='Open').length;
+  const sealedCount = S.rows.filter(r=>!r['Open']&&r['N2']>97).length;
+  const gluedCount = S.rows.filter(r=>r['N2']>=2&&r['N2']<=97).length;
+
+  document.getElementById('mainContent').innerHTML = `
+    <div class="stats-row">
+      <div class="mini-stat"><div class="sv">${S.rows.length}</div><div class="sl">Total Sets</div></div>
+      <div class="mini-stat"><div class="sv">${openCount}</div><div class="sl">Open</div></div>
+      <div class="mini-stat"><div class="sv">${sealedCount}</div><div class="sl">Sealed</div></div>
+      <div class="mini-stat"><div class="sv">${gluedCount}</div><div class="sl">Glued ✳️</div></div>
+    </div>
+    <div style="background:var(--panel);border-radius:var(--radius);padding:14px;margin-bottom:12px;border:1.5px solid var(--border)">
+      <div style="font-weight:900;color:var(--lego-red);margin-bottom:10px">💰 Spending</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:var(--bg3);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:22px;font-weight:900;color:var(--lego-green)">${totalSpend.toFixed(1)}</div>
+          <div style="font-size:10px;color:var(--text3)">TOTAL KWD</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:22px;font-weight:900;color:var(--lego-blue)">${(totalSpend/S.rows.length).toFixed(1)}</div>
+          <div style="font-size:10px;color:var(--text3)">AVG / SET</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--panel);border-radius:var(--radius);padding:14px;margin-bottom:12px;border:1.5px solid var(--border)">
+      <div style="font-weight:900;color:var(--lego-blue);margin-bottom:10px">🎨 Sets by Theme</div>
+      ${sorted.slice(0,20).map(([t,c])=>`
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="min-width:140px;font-size:12px">${themeChip(t)}</span>
+          <div style="flex:1;background:#eee;border-radius:4px;height:8px">
+            <div style="width:${Math.round(c/maxC*100)}%;height:100%;border-radius:4px;background:${(THEME_COLORS[t]||{bg:'#888'}).bg}"></div>
+          </div>
+          <span style="font-weight:800;font-size:12px;min-width:24px;text-align:right;color:var(--lego-red)">${c}</span>
+        </div>`).join('')}
+    </div>
+    <div style="background:var(--panel);border-radius:var(--radius);padding:14px;border:1.5px solid var(--border)">
+      <div style="font-weight:900;color:var(--lego-green);margin-bottom:10px">🏪 Sets by Store</div>
+      ${sortedS.map(([s,c])=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0f0">
+          ${storeChip(s)}
+          <span style="font-weight:800;color:var(--text2)">${c} sets</span>
+        </div>`).join('')}
+    </div>`;
+}
+
+// ── EXPORT ────────────────────────────────────────────────
+function exportXLSX() {
+  // Simple CSV export
+  const header = COLS.join(',');
+  const csvRows = S.rows.map(r => COLS.map(c=>`"${String(r[c]||'').replace(/"/g,'""')}"`).join(','));
+  const csv = [header, ...csvRows].join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'HSKW_LEGO_Export.csv';
+  a.click();
+  toast('📥 Exported as CSV!');
+}
+
+// ── CLOSE MODALS ──────────────────────────────────────────
+document.getElementById('detailModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('detailModal')) closeDetail();
+});
+document.getElementById('formModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('formModal')) closeForm();
+});
+
+// ── INIT ──────────────────────────────────────────────────
+render();
 </script>
-
-
-<div id="datePickerModal" class="modal"><div class="modalCard smallModal"><div class="sectionTitleLine"><b>اختيار التاريخ</b><button type="button" onclick="closeDatePicker()">إغلاق</button></div><input id="nativeDateInput" type="date"><button id="applyDateBtn" class="primary wide" type="button">اختيار</button></div></div>
-<div id="depositEditModal" class="modal"><div class="modalCard"><div class="sectionTitleLine"><b>تعديل العملية</b><button type="button" onclick="closeDepositEditor()">عودة</button></div><input type="hidden" id="editDepositModalId"><div class="grid2 depositEditorGrid"><label>اللاعب<select id="editDepositModalPlayer"></select></label><label>التاريخ<button id="editDepositModalDateBtn" class="fakeDateInput" type="button">--</button><input type="hidden" id="editDepositModalDate"></label><label>المبلغ<input id="editDepositModalAmount" type="number" step="0.001"></label><label>النوع<select id="editDepositModalType"><option value="in">إيداع</option><option value="initial">إيداع مبدئي</option><option value="out">مديونية</option><option value="late">تأخير</option></select></label></div><div class="actions"><button class="primary" type="button" onclick="saveDepositEditor()">حفظ</button><button class="danger" type="button" onclick="deleteDepositEditor()">حذف</button><button type="button" onclick="closeDepositEditor()">عودة</button></div></div></div>
-<div id="renamePagesModal" class="modal"><div class="modalCard"><div class="sectionTitleLine"><b>إعادة تسمية الصفحات</b><button type="button" onclick="closeRenamePages()">إغلاق</button></div><div id="renamePagesContent" class="pageNamesEditor"></div><button class="primary wide" type="button" onclick="saveRenamePagesModal()">حفظ</button></div></div>
-<div id="confirmModal" class="modal"><div class="modalCard confirmCard"><div class="confirmIcon">✅</div><div id="confirmMessage" class="confirmMessage"></div><button id="confirmCloseBtn" class="primary wide" type="button">إغلاق</button></div></div>
-
-<div id="excludeGuestModal" class="modal"><div class="modalCard confirmCard">
-  <div class="confirmIcon">❓</div>
-  <div id="excludeGuestMessage" class="confirmMessage"></div>
-  <div style="display:flex;gap:10px;margin-top:14px;justify-content:center">
-    <button id="excludeGuestYes" class="primary" type="button">نعم</button>
-    <button id="excludeGuestBack" type="button">العودة</button>
-  </div>
-</div></div>
 </body>
 </html>
