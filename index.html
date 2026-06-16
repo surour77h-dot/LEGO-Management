@@ -77,52 +77,72 @@ tbody td{padding:7px 9px;white-space:nowrap}
 .pgb:disabled{opacity:.35;cursor:not-allowed}
 
 /* DETAIL MODAL */
+/* Default (portrait / phone): bottom sheet */
 .mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;align-items:flex-end;justify-content:center}
 .mbg.open{display:flex}
-.modal{background:var(--panel);border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:93vh;overflow-y:auto;padding-bottom:28px;box-shadow:0 -4px 30px rgba(0,0,0,.2);animation:su .22s ease;display:flex;flex-direction:column}
-@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.mhandle{width:38px;height:4px;background:#DDD;border-radius:2px;margin:11px auto 7px;flex-shrink:0}
-.mhdr{background:var(--red);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0}
+.modal{background:var(--panel);width:100%;max-width:600px;max-height:93vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 -4px 30px rgba(0,0,0,.25);animation:suP .22s ease}
+@keyframes suP{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mhandle{width:38px;height:4px;background:#DDD;border-radius:2px;margin:10px auto 6px;flex-shrink:0}
+/* header */
+.mhdr{background:var(--red);padding:11px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0}
 .mhdr-left{flex:1;min-width:0}
-.mhdr-title{color:#fff;font-size:15px;font-weight:900;line-height:1.3}
-.mhdr-num{color:var(--yellow);font-size:12px;font-weight:700;margin-top:3px}
-.mhdr-n2{background:rgba(255,255,255,.2);color:#fff;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:800;white-space:nowrap;flex-shrink:0}
-.mclose{background:rgba(255,255,255,.2);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-/* modal inner: portrait=column, landscape=row */
+.mhdr-title{color:#fff;font-size:15px;font-weight:900;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mhdr-num{color:var(--yellow);font-size:11px;font-weight:700;margin-top:2px}
+.mhdr-n2{background:rgba(255,255,255,.22);color:#fff;padding:3px 9px;border-radius:16px;font-size:12px;font-weight:800;white-space:nowrap;flex-shrink:0}
+.mclose{background:rgba(255,255,255,.22);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+/* modal body layout: column by default */
 .modal-inner{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}
-.mbody-col{flex:1;overflow-y:auto}
-/* carousel */
-.car-wrap{background:#fff;border-bottom:2px solid var(--border);position:relative;flex-shrink:0}
-.car-viewport{overflow:hidden;width:100%}
-.car-track{display:flex;transition:transform .3s ease}
-.car-slide{min-width:100%;height:200px;display:flex;align-items:center;justify-content:center;background:#fff;padding:8px}
-.car-slide img{max-height:190px;max-width:100%;object-fit:contain}
-.car-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.18);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:17px;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center}
-.car-prev{left:6px}.car-next{right:6px}
-.car-dots{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);display:flex;gap:5px}
-.cdot{width:7px;height:7px;border-radius:50%;background:rgba(0,0,0,.2);cursor:pointer;transition:background .2s}
-.cdot.on{background:var(--red)}
-.mbody{padding:14px 18px}
-.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.mbody-col{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+/* CAROUSEL – portrait */
+.car-wrap{background:#fff;border-bottom:2px solid var(--border);flex-shrink:0;position:relative;height:220px}
+.car-viewport{width:100%;height:100%;overflow:hidden;position:relative}
+.car-track{display:flex;height:100%;transition:transform .32s cubic-bezier(.4,0,.2,1);will-change:transform}
+.car-slide{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#fff;padding:10px;flex-shrink:0}
+.car-slide img{max-height:100%;max-width:100%;object-fit:contain;display:block}
+.car-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.22);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:20px;cursor:pointer;z-index:5;display:flex;align-items:center;justify-content:center;line-height:1}
+.car-prev{left:7px}.car-next{right:7px}
+.car-dots{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:5}
+.cdot{width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.18);cursor:pointer;transition:background .2s;border:1.5px solid rgba(255,255,255,.6)}
+.cdot.on{background:var(--red);border-color:var(--red)}
+/* detail body */
+.mbody{padding:12px 16px}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
 .di{background:var(--bg2);border-radius:var(--radius-sm);padding:9px 11px}
 .di.full{grid-column:1/-1}
 .di.sm{padding:6px 9px}
 .dl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px;font-weight:700}
 .dv{font-size:14px;font-weight:700;color:var(--text)}
-.dv a{color:var(--blue);text-decoration:none;font-size:13px}
-.di-green{background:#E8F8EE}.dv-green{color:var(--green2)!important;font-size:16px}
-.di-pink{background:#FFE8E8}.dv-pink{color:#7B000A!important;font-size:16px}
-.mactions{display:flex;gap:9px;padding:0 18px;margin-top:4px;flex-shrink:0}
-/* LANDSCAPE / DESKTOP: side by side */
-@media (min-width:680px),(orientation:landscape) and (min-height:400px){
+.dv a{color:var(--blue);text-decoration:none}
+.di-green{background:#E8F8EE}.dv-green{color:var(--green2)!important;font-size:15px}
+.di-pink{background:#FFE8E8}.dv-pink{color:#7B000A!important;font-size:15px}
+.mactions{display:flex;gap:8px;padding:0 16px;margin-top:4px;flex-shrink:0;padding-bottom:6px}
+
+/* ── LANDSCAPE / DESKTOP (iPad horizontal, laptop) ── */
+@media (min-width:700px) and (orientation:landscape),
+       (min-width:900px){
   .mbg{align-items:center}
-  .modal{border-radius:var(--radius);max-width:900px;max-height:90vh;overflow:hidden}
-  @keyframes su{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+  .modal{
+    border-radius:var(--radius);
+    max-width:920px;
+    width:95vw;
+    max-height:88vh;
+    animation:suL .2s ease;
+  }
+  @keyframes suL{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
   .mhandle{display:none}
-  .modal-inner{flex-direction:row-reverse;overflow:hidden}
-  .car-wrap{width:320px;min-width:320px;border-bottom:none;border-right:2px solid var(--border);flex-shrink:0}
-  .car-slide{height:100%;min-height:360px}
-  .mbody-col{flex:1;overflow-y:auto}
+  .modal-inner{flex-direction:row;flex:1;min-height:0;overflow:hidden}
+  /* Image on the RIGHT, data on the LEFT */
+  .car-wrap{
+    order:2;
+    width:45%;
+    min-width:340px;
+    height:auto;
+    border-bottom:none;
+    border-left:2px solid var(--border);
+    flex-shrink:0;
+  }
+  .car-slide{min-height:400px}
+  .mbody-col{order:1;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 }
 
 /* FORM MODAL */
@@ -446,38 +466,80 @@ function openDetail(id){
   document.getElementById('DT').textContent=r['item Name']||'';
   document.getElementById('DN').textContent=`Item # ${r['item #']}`;
   document.getElementById('DN2').textContent=`# ${r.N2}`;
-  // Build carousel with multiple LEGO images
+  // Build carousel — try multiple sources, skip failed ones
   (function(){
     const num = r['item #'];
-    const name = (r['item Name']||'').replace(/`/g,"'");
-    // Multiple official image sources for this set
+    const name = (r['item Name']||'').replace(/"/g,"'");
+    // Multiple LEGO/Brickset image URL patterns
     const sources = [
       `https://images.brickset.com/sets/images/${num}-1.jpg`,
+      `https://images.brickset.com/sets/images/${num}-1_HighRes.jpg`,
+      `https://cdn.rebrickable.com/media/sets/${num}-1.jpg`,
       `https://images.brickset.com/sets/AdditionalImages/${num}-1/image2.jpg`,
       `https://images.brickset.com/sets/AdditionalImages/${num}-1/image3.jpg`,
-      `https://www.lego.com/cdn/cs/set/assets/blt${num}/product-image.jpg`,
+      `https://images.brickset.com/sets/AdditionalImages/${num}-1/image4.jpg`,
     ];
-    let cur = 0;
-    const slides = sources.map((src,i) =>
-      `<div class="car-slide" id="cs${i}"><img src="${src}" alt="${name}" onerror="document.getElementById('cs${i}').style.display='none'"></div>`
-    ).join('');
-    document.getElementById('DI').innerHTML = `
-      <div class="car-viewport">
-        <div class="car-track" id="ctrack">${slides}</div>
-      </div>
-      <button class="car-btn car-prev" onclick="event.stopPropagation();_carGo(-1)">‹</button>
-      <button class="car-btn car-next" onclick="event.stopPropagation();_carGo(1)">›</button>
-      <div class="car-dots" id="cdots">
-        ${sources.map((_,i)=>`<div class="cdot${i===0?' on':''}" onclick="_carSet(${i})"></div>`).join('')}
-      </div>`;
+    // We'll load all, hide the ones that fail
     window._carIdx = 0;
-    window._carTotal = sources.length;
-    window._carGo = function(d){_carSet((_carIdx+d+_carTotal)%_carTotal);};
+    window._carLoaded = [];
+    window._carGo = function(dir){
+      const loaded = window._carLoaded;
+      if(!loaded.length) return;
+      let next = (window._carIdx + dir + loaded.length) % loaded.length;
+      window._carSet(next);
+    };
     window._carSet = function(i){
-      _carIdx=i;
-      const t=document.getElementById('ctrack');
-      if(t)t.style.transform=`translateX(${i*100}%)`;
-      document.querySelectorAll('.cdot').forEach((d,j)=>d.classList.toggle('on',j===i));
+      window._carIdx = i;
+      const track = document.getElementById('ctrack');
+      if(track) track.style.transform = `translateX(${i * 100}%)`;
+      document.querySelectorAll('.cdot').forEach((d,j) => d.classList.toggle('on', j===i));
+    };
+    // Build slides
+    const slidesHtml = sources.map((src,i) =>
+      `<div class="car-slide" id="csl${i}" style="display:none">` +
+      `<img src="${src}" data-idx="${i}" alt="${name}" ` +
+      `onload="window._onImgLoad(${i})" ` +
+      `onerror="document.getElementById('csl${i}').remove();window._rebuildDots()">` +
+      `</div>`
+    ).join('');
+    document.getElementById('DI').innerHTML =
+      `<div class="car-viewport"><div class="car-track" id="ctrack">${slidesHtml}</div></div>` +
+      `<button class="car-btn car-prev" onclick="event.stopPropagation();_carGo(-1)">‹</button>` +
+      `<button class="car-btn car-next" onclick="event.stopPropagation();_carGo(1)">›</button>` +
+      `<div class="car-dots" id="cdots"></div>`;
+    window._onImgLoad = function(i){
+      const slide = document.getElementById('csl'+i);
+      if(!slide) return;
+      slide.style.display = '';
+      window._carLoaded.push(i);
+      window._rebuildDots();
+      // Show first loaded image immediately
+      if(window._carLoaded.length === 1){
+        window._rebuildTrack();
+      }
+    };
+    window._rebuildDots = function(){
+      const loaded = window._carLoaded.sort((a,b)=>a-b);
+      const dots = document.getElementById('cdots');
+      if(!dots) return;
+      dots.innerHTML = loaded.map((_,j)=>
+        `<div class="cdot${j===0?' on':''}" onclick="_carSetByLoaded(${j})"></div>`
+      ).join('');
+    };
+    window._carSetByLoaded = function(j){
+      const loaded = window._carLoaded.sort((a,b)=>a-b);
+      window._carIdx = j;
+      window._rebuildTrack();
+      document.querySelectorAll('.cdot').forEach((d,k)=>d.classList.toggle('on',k===j));
+    };
+    window._rebuildTrack = function(){
+      // Rearrange track so only loaded slides are shown in order
+      const track = document.getElementById('ctrack');
+      if(!track) return;
+      const loaded = window._carLoaded.sort((a,b)=>a-b);
+      const slides = loaded.map(i=>document.getElementById('csl'+i)).filter(Boolean);
+      slides.forEach(s=>track.appendChild(s));
+      track.style.transform = `translateX(${window._carIdx * 100}%)`;
     };
   })();
   const pBuy=parseFloat(r['Price BUY'])||0;
@@ -697,7 +759,7 @@ function renderDash(){
   if(hide.has('glued'))rows=rows.filter(r=>!(r.N2>=2&&r.N2<=97));
   if(hide.has('open'))rows=rows.filter(r=>r.Open!=='Open');
   if(hide.has('sealed'))rows=rows.filter(r=>!((!r.Open)&&r.N2>97));
-  if(hide.has('dup'))rows=rows.filter(r=>!DUPES.has(r['item #']));
+  // dup filter removed
 
   // Spend from row 98+
   const spendRows=rows.filter(r=>r.N2>=98);
@@ -715,7 +777,6 @@ function renderDash(){
     {k:'open',l:'🔓 Open',col:'var(--green)',cnt:S.rows.filter(r=>r.Open==='Open').length},
     {k:'sealed',l:'🔒 Sealed',col:'var(--blue)',cnt:S.rows.filter(r=>!r.Open&&r.N2>97).length},
     {k:'glued',l:'✳️ Glued',col:'#856404',cnt:S.rows.filter(r=>r.N2>=2&&r.N2<=97).length},
-    {k:'dup',l:'🔁 Duplicates',col:'var(--red)',cnt:DUPES.size,tip:'ألعاب مشتراة بنفس رقم الـ Item أكثر من مرة'},
   ];
 
   document.getElementById('C').innerHTML=`
