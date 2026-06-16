@@ -94,10 +94,10 @@ tbody td{padding:7px 9px;white-space:nowrap}
 .modal-inner{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}
 .mbody-col{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 /* CAROUSEL – portrait */
-.car-wrap{background:#fff;border-bottom:2px solid var(--border);flex-shrink:0;position:relative;height:220px}
+.car-wrap{background:#fff;border-bottom:2px solid var(--border);flex-shrink:0;position:relative;height:260px}
 .car-viewport{width:100%;height:100%;overflow:hidden;position:relative}
 .car-track{display:flex;height:100%;transition:transform .32s cubic-bezier(.4,0,.2,1);will-change:transform}
-.car-slide{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#fff;padding:10px;flex-shrink:0}
+.car-slide{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#fff;padding:12px;flex-shrink:0}
 .car-slide img{max-height:100%;max-width:100%;object-fit:contain;display:block}
 .car-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.22);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:20px;cursor:pointer;z-index:5;display:flex;align-items:center;justify-content:center;line-height:1}
 .car-prev{left:7px}.car-next{right:7px}
@@ -141,7 +141,7 @@ tbody td{padding:7px 9px;white-space:nowrap}
     border-left:2px solid var(--border);
     flex-shrink:0;
   }
-  .car-slide{min-height:400px}
+  .car-slide{min-height:420px}
   .mbody-col{order:1;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 }
 
@@ -466,81 +466,98 @@ function openDetail(id){
   document.getElementById('DT').textContent=r['item Name']||'';
   document.getElementById('DN').textContent=`Item # ${r['item #']}`;
   document.getElementById('DN2').textContent=`# ${r.N2}`;
-  // Build carousel — try multiple sources, skip failed ones
+  // ── IMAGE CAROUSEL ─────────────────────────────────────
   (function(){
     const num = r['item #'];
-    const name = (r['item Name']||'').replace(/"/g,"'");
-    // Multiple LEGO/Brickset image URL patterns
-    const sources = [
+    const nm  = (r['item Name']||'').replace(/"/g,"'");
+    // Multiple official URL patterns - browser img tags bypass CORS
+    // Tried in order: Brickset main, Rebrickable, BrickLink box, BrickLink set
+    const allSrcs = [
       `https://images.brickset.com/sets/images/${num}-1.jpg`,
-      `https://images.brickset.com/sets/images/${num}-1_HighRes.jpg`,
       `https://cdn.rebrickable.com/media/sets/${num}-1.jpg`,
+      `https://img.bricklink.com/ItemImage/ON/0/${num}-1.png`,
+      `https://img.bricklink.com/ItemImage/SL/0/${num}-1.png`,
+      `https://images.brickset.com/sets/images/${num}-1_HighRes.jpg`,
       `https://images.brickset.com/sets/AdditionalImages/${num}-1/image2.jpg`,
-      `https://images.brickset.com/sets/AdditionalImages/${num}-1/image3.jpg`,
-      `https://images.brickset.com/sets/AdditionalImages/${num}-1/image4.jpg`,
     ];
-    // We'll load all, hide the ones that fail
-    window._carIdx = 0;
-    window._carLoaded = [];
-    window._carGo = function(dir){
-      const loaded = window._carLoaded;
-      if(!loaded.length) return;
-      let next = (window._carIdx + dir + loaded.length) % loaded.length;
-      window._carSet(next);
-    };
-    window._carSet = function(i){
-      window._carIdx = i;
-      const track = document.getElementById('ctrack');
-      if(track) track.style.transform = `translateX(${i * 100}%)`;
-      document.querySelectorAll('.cdot').forEach((d,j) => d.classList.toggle('on', j===i));
-    };
-    // Build slides
-    const slidesHtml = sources.map((src,i) =>
-      `<div class="car-slide" id="csl${i}" style="display:none">` +
-      `<img src="${src}" data-idx="${i}" alt="${name}" ` +
-      `onload="window._onImgLoad(${i})" ` +
-      `onerror="document.getElementById('csl${i}').remove();window._rebuildDots()">` +
-      `</div>`
-    ).join('');
-    document.getElementById('DI').innerHTML =
-      `<div class="car-viewport"><div class="car-track" id="ctrack">${slidesHtml}</div></div>` +
-      `<button class="car-btn car-prev" onclick="event.stopPropagation();_carGo(-1)">‹</button>` +
-      `<button class="car-btn car-next" onclick="event.stopPropagation();_carGo(1)">›</button>` +
-      `<div class="car-dots" id="cdots"></div>`;
-    window._onImgLoad = function(i){
-      const slide = document.getElementById('csl'+i);
-      if(!slide) return;
-      slide.style.display = '';
-      window._carLoaded.push(i);
-      window._rebuildDots();
-      // Show first loaded image immediately
-      if(window._carLoaded.length === 1){
-        window._rebuildTrack();
-      }
-    };
-    window._rebuildDots = function(){
-      const loaded = window._carLoaded.sort((a,b)=>a-b);
-      const dots = document.getElementById('cdots');
-      if(!dots) return;
-      dots.innerHTML = loaded.map((_,j)=>
-        `<div class="cdot${j===0?' on':''}" onclick="_carSetByLoaded(${j})"></div>`
+    let loaded = [];   // indices into allSrcs that loaded successfully
+    let cur = 0;       // index within loaded[]
+
+    function buildUI(){
+      const slides = allSrcs.map((src,i) =>
+        `<div class="car-slide" id="csl_${i}" style="display:none">` +
+        `<img src="${src}" alt="${nm}" ` +
+        `onload="window.__imgOK(${i})" ` +
+        `onerror="window.__imgFail(${i})">` +
+        `</div>`
       ).join('');
-    };
-    window._carSetByLoaded = function(j){
-      const loaded = window._carLoaded.sort((a,b)=>a-b);
-      window._carIdx = j;
-      window._rebuildTrack();
-      document.querySelectorAll('.cdot').forEach((d,k)=>d.classList.toggle('on',k===j));
-    };
-    window._rebuildTrack = function(){
-      // Rearrange track so only loaded slides are shown in order
-      const track = document.getElementById('ctrack');
+      document.getElementById('DI').innerHTML =
+        `<div class="car-viewport"><div class="car-track" id="ctrack_${num}">${slides}</div></div>` +
+        `<button class="car-btn car-prev" onclick="event.stopPropagation();__carGo(-1)">‹</button>` +
+        `<button class="car-btn car-next" onclick="event.stopPropagation();__carGo(1)">›</button>` +
+        `<div class="car-dots" id="cdots_${num}"></div>` +
+        `<div id="car_placeholder" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none">` +
+        `<div style="text-align:center;opacity:.25"><div style="font-size:48px">🧱</div><div style="font-size:11px;color:#999;margin-top:4px">${nm}</div></div></div>`;
+    }
+
+    function updateDots(){
+      const dotsEl = document.getElementById('cdots_${num}');
+      if(!dotsEl) return;
+      dotsEl.innerHTML = loaded.map((_,j) =>
+        `<div class="cdot${j===cur?' on':''}" onclick="__carSetJ(${j})"></div>`
+      ).join('');
+    }
+
+    function showSlide(j){
+      cur = j;
+      const track = document.getElementById('ctrack_${num}');
       if(!track) return;
-      const loaded = window._carLoaded.sort((a,b)=>a-b);
-      const slides = loaded.map(i=>document.getElementById('csl'+i)).filter(Boolean);
-      slides.forEach(s=>track.appendChild(s));
-      track.style.transform = `translateX(${window._carIdx * 100}%)`;
+      // Reorder track children to match loaded[]
+      loaded.forEach((srcIdx,k) => {
+        const sl = document.getElementById('csl_'+srcIdx);
+        if(sl){ sl.style.display=''; track.appendChild(sl); }
+      });
+      track.style.transform = `translateX(${j*100}%)`;
+      updateDots();
+    }
+
+    window.__imgOK = function(i){
+      const ph = document.getElementById('car_placeholder');
+      if(ph) ph.style.display='none';
+      if(!loaded.includes(i)){ loaded.push(i); loaded.sort((a,b)=>a-b); }
+      if(loaded.length===1) showSlide(0);
+      else updateDots();
     };
+    window.__imgFail = function(i){
+      const sl = document.getElementById('csl_'+i);
+      if(sl) sl.style.display='none';
+    };
+    window.__carGo = function(d){
+      if(!loaded.length) return;
+      showSlide((cur+d+loaded.length)%loaded.length);
+    };
+    window.__carSetJ = function(j){
+      showSlide(j);
+    };
+
+    // Touch/swipe support
+    let tx=0;
+    window.__carSwipeStart = function(e){ tx=e.touches[0].clientX; };
+    window.__carSwipeEnd   = function(e){
+      const dx=e.changedTouches[0].clientX-tx;
+      if(Math.abs(dx)>40) __carGo(dx<0?1:-1);
+    };
+
+    buildUI();
+
+    // Add swipe listeners to carousel
+    setTimeout(()=>{
+      const vp=document.querySelector('.car-viewport');
+      if(vp){
+        vp.addEventListener('touchstart',e=>window.__carSwipeStart(e),{passive:true});
+        vp.addEventListener('touchend',  e=>window.__carSwipeEnd(e),  {passive:true});
+      }
+    },100);
   })();
   const pBuy=parseFloat(r['Price BUY'])||0;
   const pOrig=parseFloat(r.Price)||0;
