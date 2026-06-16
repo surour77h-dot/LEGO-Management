@@ -77,19 +77,31 @@ tbody td{padding:7px 9px;white-space:nowrap}
 .pgb:disabled{opacity:.35;cursor:not-allowed}
 
 /* DETAIL MODAL */
-.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:flex-end;justify-content:center}
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;align-items:flex-end;justify-content:center}
 .mbg.open{display:flex}
-.modal{background:var(--panel);border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:93vh;overflow-y:auto;padding-bottom:28px;box-shadow:0 -4px 30px rgba(0,0,0,.2);animation:su .22s ease}
+.modal{background:var(--panel);border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:93vh;overflow-y:auto;padding-bottom:28px;box-shadow:0 -4px 30px rgba(0,0,0,.2);animation:su .22s ease;display:flex;flex-direction:column}
 @keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.mhandle{width:38px;height:4px;background:#DDD;border-radius:2px;margin:11px auto 7px}
-.mhdr{background:var(--red);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mhandle{width:38px;height:4px;background:#DDD;border-radius:2px;margin:11px auto 7px;flex-shrink:0}
+.mhdr{background:var(--red);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0}
 .mhdr-left{flex:1;min-width:0}
 .mhdr-title{color:#fff;font-size:15px;font-weight:900;line-height:1.3}
 .mhdr-num{color:var(--yellow);font-size:12px;font-weight:700;margin-top:3px}
 .mhdr-n2{background:rgba(255,255,255,.2);color:#fff;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:800;white-space:nowrap;flex-shrink:0}
 .mclose{background:rgba(255,255,255,.2);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.mimg-wrap{background:#fff;height:190px;display:flex;align-items:center;justify-content:center;border-bottom:2px solid var(--border)}
-.mimg{max-height:180px;max-width:100%;object-fit:contain}
+/* modal inner: portrait=column, landscape=row */
+.modal-inner{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}
+.mbody-col{flex:1;overflow-y:auto}
+/* carousel */
+.car-wrap{background:#fff;border-bottom:2px solid var(--border);position:relative;flex-shrink:0}
+.car-viewport{overflow:hidden;width:100%}
+.car-track{display:flex;transition:transform .3s ease}
+.car-slide{min-width:100%;height:200px;display:flex;align-items:center;justify-content:center;background:#fff;padding:8px}
+.car-slide img{max-height:190px;max-width:100%;object-fit:contain}
+.car-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.18);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:17px;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center}
+.car-prev{left:6px}.car-next{right:6px}
+.car-dots{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);display:flex;gap:5px}
+.cdot{width:7px;height:7px;border-radius:50%;background:rgba(0,0,0,.2);cursor:pointer;transition:background .2s}
+.cdot.on{background:var(--red)}
 .mbody{padding:14px 18px}
 .dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .di{background:var(--bg2);border-radius:var(--radius-sm);padding:9px 11px}
@@ -98,11 +110,20 @@ tbody td{padding:7px 9px;white-space:nowrap}
 .dl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px;font-weight:700}
 .dv{font-size:14px;font-weight:700;color:var(--text)}
 .dv a{color:var(--blue);text-decoration:none;font-size:13px}
-.di-green{background:#E8F8EE}
-.dv-green{color:var(--green2)!important;font-size:16px}
-.di-pink{background:#FFE8E8}
-.dv-pink{color:#7B000A!important;font-size:16px}
-.mactions{display:flex;gap:9px;padding:0 18px;margin-top:4px}
+.di-green{background:#E8F8EE}.dv-green{color:var(--green2)!important;font-size:16px}
+.di-pink{background:#FFE8E8}.dv-pink{color:#7B000A!important;font-size:16px}
+.mactions{display:flex;gap:9px;padding:0 18px;margin-top:4px;flex-shrink:0}
+/* LANDSCAPE / DESKTOP: side by side */
+@media (min-width:680px),(orientation:landscape) and (min-height:400px){
+  .mbg{align-items:center}
+  .modal{border-radius:var(--radius);max-width:900px;max-height:90vh;overflow:hidden}
+  @keyframes su{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+  .mhandle{display:none}
+  .modal-inner{flex-direction:row-reverse;overflow:hidden}
+  .car-wrap{width:320px;min-width:320px;border-bottom:none;border-right:2px solid var(--border);flex-shrink:0}
+  .car-slide{height:100%;min-height:360px}
+  .mbody-col{flex:1;overflow-y:auto}
+}
 
 /* FORM MODAL */
 .fbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:400;align-items:center;justify-content:center;padding:14px}
@@ -197,7 +218,7 @@ tbody td{padding:7px 9px;white-space:nowrap}
 <div class="mbg" id="DM">
   <div class="modal">
     <div class="mhandle"></div>
-    <div class="mhdr">
+    <div class="mhdr" id="DH">
       <div class="mhdr-left">
         <div class="mhdr-title" id="DT"></div>
         <div class="mhdr-num" id="DN"></div>
@@ -205,9 +226,13 @@ tbody td{padding:7px 9px;white-space:nowrap}
       <div class="mhdr-n2" id="DN2"></div>
       <button class="mclose" onclick="cDetail()">✕</button>
     </div>
-    <div class="mimg-wrap" id="DI"></div>
-    <div class="mbody" id="DB"></div>
-    <div class="mactions" id="DA"></div>
+    <div class="modal-inner">
+      <div class="car-wrap" id="DI"></div>
+      <div class="mbody-col">
+        <div class="mbody" id="DB"></div>
+        <div class="mactions" id="DA"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -421,8 +446,40 @@ function openDetail(id){
   document.getElementById('DT').textContent=r['item Name']||'';
   document.getElementById('DN').textContent=`Item # ${r['item #']}`;
   document.getElementById('DN2').textContent=`# ${r.N2}`;
-  const imgWrap=document.getElementById('DI');
-  imgWrap.innerHTML=`<img class="mimg" src="${brickImg(r['item #'])}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="${r['item Name']}"><div style="display:none;flex-direction:column;align-items:center;gap:8px"><div style="font-size:50px;opacity:.15">🧱</div><div style="font-size:11px;color:#bbb">${r['item Name']}</div></div>`;
+  // Build carousel with multiple LEGO images
+  (function(){
+    const num = r['item #'];
+    const name = (r['item Name']||'').replace(/`/g,"'");
+    // Multiple official image sources for this set
+    const sources = [
+      `https://images.brickset.com/sets/images/${num}-1.jpg`,
+      `https://images.brickset.com/sets/AdditionalImages/${num}-1/image2.jpg`,
+      `https://images.brickset.com/sets/AdditionalImages/${num}-1/image3.jpg`,
+      `https://www.lego.com/cdn/cs/set/assets/blt${num}/product-image.jpg`,
+    ];
+    let cur = 0;
+    const slides = sources.map((src,i) =>
+      `<div class="car-slide" id="cs${i}"><img src="${src}" alt="${name}" onerror="document.getElementById('cs${i}').style.display='none'"></div>`
+    ).join('');
+    document.getElementById('DI').innerHTML = `
+      <div class="car-viewport">
+        <div class="car-track" id="ctrack">${slides}</div>
+      </div>
+      <button class="car-btn car-prev" onclick="event.stopPropagation();_carGo(-1)">‹</button>
+      <button class="car-btn car-next" onclick="event.stopPropagation();_carGo(1)">›</button>
+      <div class="car-dots" id="cdots">
+        ${sources.map((_,i)=>`<div class="cdot${i===0?' on':''}" onclick="_carSet(${i})"></div>`).join('')}
+      </div>`;
+    window._carIdx = 0;
+    window._carTotal = sources.length;
+    window._carGo = function(d){_carSet((_carIdx+d+_carTotal)%_carTotal);};
+    window._carSet = function(i){
+      _carIdx=i;
+      const t=document.getElementById('ctrack');
+      if(t)t.style.transform=`translateX(${i*100}%)`;
+      document.querySelectorAll('.cdot').forEach((d,j)=>d.classList.toggle('on',j===i));
+    };
+  })();
   const pBuy=parseFloat(r['Price BUY'])||0;
   const pOrig=parseFloat(r.Price)||0;
   const origHigher=pOrig>pBuy, origEq=Math.abs(pOrig-pBuy)<0.001;
@@ -658,7 +715,7 @@ function renderDash(){
     {k:'open',l:'🔓 Open',col:'var(--green)',cnt:S.rows.filter(r=>r.Open==='Open').length},
     {k:'sealed',l:'🔒 Sealed',col:'var(--blue)',cnt:S.rows.filter(r=>!r.Open&&r.N2>97).length},
     {k:'glued',l:'✳️ Glued',col:'#856404',cnt:S.rows.filter(r=>r.N2>=2&&r.N2<=97).length},
-    {k:'dup',l:'🔁 Dupes',col:'var(--red)',cnt:DUPES.size},
+    {k:'dup',l:'🔁 Duplicates',col:'var(--red)',cnt:DUPES.size,tip:'ألعاب مشتراة بنفس رقم الـ Item أكثر من مرة'},
   ];
 
   document.getElementById('C').innerHTML=`
@@ -666,8 +723,11 @@ function renderDash(){
       <div class="dash-title" style="color:var(--red)">🎛 Filters — Showing ${rows.length} / ${S.rows.length} sets</div>
       <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:8px">
         ${cats.map(cat=>`
-          <div class="dtog ${!hide.has(cat.k)?'on':''}" style="color:${cat.col};border-color:${!hide.has(cat.k)?cat.col:'var(--border)'}" onclick="S.dashHide.has('${cat.k}')?S.dashHide.delete('${cat.k}'):S.dashHide.add('${cat.k}');renderDash()">
-            ${!hide.has(cat.k)?'✓ ':''}${cat.l} (${cat.cnt})
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <div class="dtog ${!hide.has(cat.k)?'on':''}" style="color:${cat.col};border-color:${!hide.has(cat.k)?cat.col:'var(--border)'}" onclick="S.dashHide.has('${cat.k}')?S.dashHide.delete('${cat.k}'):S.dashHide.add('${cat.k}');renderDash()">
+              ${!hide.has(cat.k)?'✓ ':''}${cat.l} (${cat.cnt})
+            </div>
+            ${cat.tip?`<span style="font-size:10px;color:var(--text3);padding-right:2px">${cat.tip}</span>`:''}
           </div>`).join('')}
       </div>
     </div>
