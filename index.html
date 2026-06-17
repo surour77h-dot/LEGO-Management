@@ -7,6 +7,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="HSKW LEGO">
 <link rel="manifest" href="manifest.json">
+<!-- images.js is optional: run download_lego_images.py to generate it -->
+<script>const LEGO_IMGS = {};</script>
+<script src="images.js" onerror="console.log('images.js not found - using online sources')"></script>
 <title>HSKW LEGO Collection</title>
 <style>
 :root{
@@ -470,9 +473,12 @@ function openDetail(id){
   (function(){
     const num = r['item #'];
     const nm  = (r['item Name']||'').replace(/"/g,"'");
-    // Multiple official URL patterns - browser img tags bypass CORS
-    // Tried in order: Brickset main, Rebrickable, BrickLink box, BrickLink set
-    const allSrcs = [
+
+    // Check if we have embedded images (from images.js)
+    const embedded = (typeof LEGO_IMGS !== 'undefined') ? LEGO_IMGS[String(num)] : null;
+
+    // Online sources as fallback (may not work due to CORS)
+    const onlineSrcs = [
       `https://images.brickset.com/sets/images/${num}-1.jpg`,
       `https://cdn.rebrickable.com/media/sets/${num}-1.jpg`,
       `https://img.bricklink.com/ItemImage/ON/0/${num}-1.png`,
@@ -480,6 +486,15 @@ function openDetail(id){
       `https://images.brickset.com/sets/images/${num}-1_HighRes.jpg`,
       `https://images.brickset.com/sets/AdditionalImages/${num}-1/image2.jpg`,
     ];
+
+    // If embedded image exists, show it first + online sources after
+    const allSrcs = embedded ? [embedded, ...onlineSrcs] : onlineSrcs;
+  (function(){
+    const num = r['item #'];
+    const nm  = (r['item Name']||'').replace(/"/g,"'");
+    // Multiple official URL patterns - browser img tags bypass CORS
+    // Tried in order: Brickset main, Rebrickable, BrickLink box, BrickLink set
+    // allSrcs defined above based on embedded vs online
     let loaded = [];   // indices into allSrcs that loaded successfully
     let cur = 0;       // index within loaded[]
 
